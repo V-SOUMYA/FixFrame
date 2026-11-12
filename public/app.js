@@ -1,13 +1,12 @@
-/* global agGrid */
 const UI = window.TimeBackUI;
 const $ = (id) => document.getElementById(id);
 const money = (n) => `$${Number(n).toFixed(2)}`;
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const fmtT = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
-
+ 
 const state = { config: null, jobId: null, dx: null, media: null, parts: [], sel: {}, grid: null, pro: null, partsPaid: null };
-
+ 
 async function api(path, body, isForm) {
   const res = await fetch(path, {
     method: body ? 'POST' : 'GET',
@@ -19,7 +18,7 @@ async function api(path, body, isForm) {
   if (!res.ok) throw new Error(data.error || 'Request failed');
   return data;
 }
-
+ 
 // ======================= init =======================
 async function init() {
   UI.setPalette('noir');
@@ -37,18 +36,19 @@ async function init() {
     [c.channel3Enabled, c.channel3Enabled ? 'Real parts and prices from Channel3' : 'Sample parts until a Channel3 key is set'],
     [c.paypalEnabled, c.paypalEnabled ? 'PayPal sandbox checkout' : 'Simulated PayPal checkout'],
   ].map(([on, t]) => `<span><i class="${on ? 'on' : ''}"></i>${t}</span>`).join('');
-
+ 
   $('file').addEventListener('change', (e) => e.target.files[0] && analyze(e.target.files[0]));
   const drop = $('drop');
   ['dragenter', 'dragover'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add('over'); }));
   ['dragleave', 'drop'].forEach((ev) => drop.addEventListener(ev, () => drop.classList.remove('over')));
   drop.addEventListener('drop', (e) => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) analyze(f); });
-  $('demoBtn').addEventListener('click', loadDemo);
+  document.querySelectorAll('[data-demo-item]').forEach((b) => b.addEventListener('click', () => loadDemo(b.dataset.demoItem)));
   $('newBtn').addEventListener('click', () => location.assign('fix.html'));
   if (c.paypalEnabled) loadPayPalSdk();
-  if (new URLSearchParams(location.search).get('demo')) loadDemo();
+  const qd = new URLSearchParams(location.search).get('demo');
+  if (qd) loadDemo(qd === 'chair' ? 'chair' : 'faucet');
 }
-
+ 
 // ======================= analyze =======================
 function showAnalyzing(previewHtml) {
   $('uploadView').classList.add('hidden');
@@ -76,15 +76,15 @@ async function runSteps(promise, lines) {
   last.classList.remove('live');
   return out;
 }
-
-async function loadDemo() {
-  showAnalyzing('<img src="media/demo-poster.jpg" alt="" />');
+ 
+async function loadDemo(item = 'faucet') {
+  showAnalyzing(`<img src="${item === 'chair' ? 'media/demo-chair-poster.jpg' : 'media/demo-poster.jpg'}" alt="" />`);
   try {
-    const data = await runSteps(api('/api/demo'), ['Pulling 8 frames from your clip', 'Spotting what looks wrong', 'Matching the fault to parts', 'Writing your repair steps']);
+    const data = await runSteps(api(`/api/demo?item=${item}`), ['Pulling 8 frames from your clip', 'Spotting what looks wrong', 'Matching the fault to parts', 'Writing your repair steps']);
     showResults(data, { url: data.media.url, type: 'video' });
   } catch (err) { fail(err); }
 }
-
+ 
 async function analyze(file) {
   const url = URL.createObjectURL(file);
   const isImg = file.type.startsWith('image/');
@@ -94,20 +94,20 @@ async function analyze(file) {
   fd.append('note', $('note').value);
   try {
     const data = await runSteps(api('/api/diagnose', fd, true), ['Uploading your clip', 'Pulling frames from your video', 'Spotting what looks wrong', 'Matching the fault to parts', 'Writing your repair steps']);
-    const media = data.source === 'demo' ? { url: 'media/demo-faucet.mp4', type: 'video' } : { url, type: isImg ? 'image' : 'video' };
+    const media = data.source === 'demo' ? { url: data.diagnosis.media.url, type: 'video' } : { url, type: isImg ? 'image' : 'video' };
     showResults(data, media);
   } catch (err) { fail(err); }
 }
-
+ 
 function fail(err) {
   $('aSteps').insertAdjacentHTML('beforeend', `<li class="err">${esc(err.message)}</li>`);
   setTimeout(() => {
     $('analyzeView').classList.add('hidden');
     $('uploadView').classList.remove('hidden');
     $('scanMedia').querySelectorAll('img,video').forEach((n) => n.remove());
-  }, 3200);
+  }, 7000);
 }
-
+ 
 // ======================= results =======================
 function showResults(data, media) {
   state.jobId = data.id;
@@ -124,7 +124,7 @@ function showResults(data, media) {
   window.TimeBackReveal && window.TimeBackReveal();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
+ 
 // ---------- player with overlay boxes + marker timeline ----------
 function renderPlayer() {
   const dx = state.dx;
@@ -133,7 +133,7 @@ function renderPlayer() {
   $('ov').innerHTML = dx.markers.map((m, i) => `<div class="box ${m.box.y < 0.12 ? 'below' : ''} ${m.box.x + m.box.w / 2 > 0.6 ? 'right' : ''}" data-i="${i}" style="left:${m.box.x * 100}%;top:${m.box.y * 100}%;width:${m.box.w * 100}%;height:${m.box.h * 100}%"><span class="tag">${esc(m.label)}</span></div>`).join('');
   $('markerChips').innerHTML = dx.markers.map((m, i) => `<button class="mchip" data-i="${i}" type="button"><b>${fmtT(m.t)}</b>${esc(m.label)}</button>`).join('');
   $('markerChips').onclick = (e) => { const b = e.target.closest('.mchip'); if (b) seekMarker(Number(b.dataset.i)); };
-
+ 
   if (state.media.type === 'image') {
     v.replaceWith(Object.assign(document.createElement('img'), { id: 'video', src: state.media.url, alt: 'Your photo' }));
     document.querySelectorAll('.box').forEach((b) => b.classList.add('show'));
@@ -173,7 +173,7 @@ function renderPlayer() {
   };
   requestAnimationFrame(tick);
 }
-
+ 
 function seekMarker(i) {
   const v = $('video');
   const m = state.dx.markers[i];
@@ -184,7 +184,7 @@ function seekMarker(i) {
   document.querySelectorAll('.box').forEach((b) => (b.dataset.pin = b.dataset.i === String(i) ? '1' : ''));
   $('player').scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
-
+ 
 // ---------- diagnosis card ----------
 function renderDx(notice) {
   const dx = state.dx;
@@ -198,7 +198,7 @@ function renderDx(notice) {
   $('dxSafety').innerHTML = dx.safety.map((s) => `<div class="safety">⚠ ${esc(s)}</div>`).join('');
   $('dxNotice').innerHTML = notice ? `<div class="notice">${esc(notice)}</div>` : '';
 }
-
+ 
 // ---------- steps pinned to timestamps ----------
 function renderSteps() {
   const dx = state.dx;
@@ -223,7 +223,7 @@ function syncSteps(t) {
   steps.forEach((s, i) => { if (Math.abs(s.t - t) < 1.3 && (best < 0 || Math.abs(s.t - t) < Math.abs(steps[best].t - t))) best = i; });
   document.querySelectorAll('.step').forEach((x, i) => x.classList.toggle('on', i === best));
 }
-
+ 
 // ======================= parts (Channel3) + verdict =======================
 async function loadParts() {
   $('cartSum').innerHTML = '<p class="muted">Finding parts…</p>';
@@ -238,7 +238,7 @@ async function loadParts() {
   }
 }
 const cheapest = (offers) => offers.reduce((best, o, i) => (best < 0 || o.price < offers[best].price ? i : best), -1);
-
+ 
 function renderParts() {
   const live = state.parts.some((p) => p.source === 'channel3');
   $('partsSrc').textContent = live ? 'Live from Channel3' : 'Sample offers';
@@ -252,7 +252,7 @@ function renderParts() {
   state.grid.setGridOption('rowData', rows);
   renderCart();
 }
-
+ 
 async function visualSearch(key, btn) {
   btn.disabled = true;
   btn.textContent = 'Searching…';
@@ -267,7 +267,7 @@ async function visualSearch(key, btn) {
     btn.disabled = false;
   }
 }
-
+ 
 function createGrid() {
   if (!window.agGrid) {
     $('grid').innerHTML = '<p class="muted">The parts grid needs AG Grid. Run npm install and npm start.</p>';
@@ -298,7 +298,7 @@ function createGrid() {
     suppressCellFocus: true,
   });
 }
-
+ 
 function pick(row) {
   if (state.partsPaid) return;
   const cur = state.sel[row.partKey];
@@ -307,11 +307,11 @@ function pick(row) {
   state.grid.redrawRows();
   renderCart();
 }
-
+ 
 function chosenParts() {
   return state.parts.filter((p) => state.sel[p.key] >= 0).map((p) => ({ part: p, offer: p.offers[state.sel[p.key]] }));
 }
-
+ 
 function renderCart() {
   const chosen = chosenParts();
   const total = chosen.reduce((s, c) => s + c.offer.price * (c.part.qty || 1), 0);
@@ -325,7 +325,7 @@ function renderCart() {
   $('demoPayParts').onclick = payPartsDemo;
   renderVerdict();
 }
-
+ 
 function renderVerdict() {
   const dx = state.dx;
   const repair = state.repairTotal || 0;
@@ -339,7 +339,7 @@ function renderVerdict() {
   if (dx.water_gal_year) bits.push(`~${dx.water_gal_year.toLocaleString()} gal of water a year`);
   $('vImpact').textContent = bits.join(' · ');
 }
-
+ 
 // ======================= PayPal: parts =======================
 function loadPayPalSdk() {
   const add = (intent, ns, cb) => {
@@ -373,7 +373,7 @@ function partsPaid(r) {
     <a class="btn light" href="${doneHref('diy')}" style="justify-self:start">See what you saved <span class="plus">→</span></a></div>`;
   UI.setPalette('done');
 }
-
+ 
 // ======================= pros: pay only if fixed =======================
 async function loadPros() {
   const { pros } = await api(`/api/jobs/${state.jobId}/pros`);
@@ -386,7 +386,7 @@ async function loadPros() {
   $('pros').onclick = (e) => { const b = e.target.closest('[data-book]'); if (b) bookPro(pros.find((p) => p.id === b.dataset.book)); };
   setFlow('book');
 }
-
+ 
 function setFlow(now, bad) {
   const order = ['book', 'hold', 'repair', 'verify', 'pay'];
   const idx = order.indexOf(now);
@@ -394,7 +394,7 @@ function setFlow(now, bad) {
     el.className = `fs ${i < idx ? 'done' : ''} ${i === idx ? (bad ? 'bad' : 'now') : ''}`;
   });
 }
-
+ 
 async function bookPro(pro) {
   if (state.pro && state.pro.status !== 'VOIDED') return;
   document.querySelectorAll('.pro').forEach((el) => el.classList.toggle('sel', el.dataset.id === pro.id));
@@ -416,7 +416,15 @@ async function bookPro(pro) {
     };
   }
 }
-
+ 
+function afterCards() {
+  const a = state.dx.after;
+  const m = state.dx.media;
+  if (!a || !m) return '<small class="muted" style="margin:0">Upload a clip of the finished repair.</small>';
+  const card = (k, src) => `<button class="demo-card" data-demo="${k}" type="button"><video src="${src}" muted loop autoplay playsinline style="width:110px;height:62px;object-fit:cover;border-radius:12px"></video><span><b>${esc(a[k].label)}</b><small>${esc(a[k].sub)}</small></span></button>`;
+  return card('fixed', m.fixed) + card('leaking', m.url);
+}
+ 
 function held(r) {
   state.pro.status = 'HELD';
   state.pro.authorizationId = r.authorizationId;
@@ -427,15 +435,14 @@ function held(r) {
       <label class="drop" style="min-height:150px"><input type="file" id="afterFile" accept="video/*,image/*" capture="environment"><div><b>Upload your after-clip</b><p style="font-size:13px">FixFrame compares it to the original problem</p></div></label>
       <div class="side-card" style="padding:0;gap:10px">
         <small class="muted" style="margin:0">Or try the demo after-clips:</small>
-        <button class="demo-card" data-demo="fixed" type="button"><video src="media/demo-faucet-fixed.mp4" muted loop autoplay playsinline style="width:110px;height:62px;object-fit:cover;border-radius:12px"></video><span><b>Repaired faucet</b><small>No drip, dry handle base</small></span></button>
-        <button class="demo-card" data-demo="leaking" type="button"><video src="media/demo-faucet.mp4" muted loop autoplay playsinline style="width:110px;height:62px;object-fit:cover;border-radius:12px"></video><span><b>Still leaking</b><small>See what happens if it isn't fixed</small></span></button>
+        ${afterCards()}
       </div>
     </div>
     <div id="verifyOut" style="margin-top:14px"></div>`;
   $('afterFile').onchange = (e) => e.target.files[0] && verify({ file: e.target.files[0] });
   document.querySelectorAll('[data-demo]').forEach((b) => (b.onclick = () => verify({ demo: b.dataset.demo })));
 }
-
+ 
 async function verify({ file, demo }) {
   setFlow('verify');
   const out = $('verifyOut');
@@ -470,7 +477,7 @@ async function verify({ file, demo }) {
     out.innerHTML = `<div class="err-box">${esc(err.message)}</div>`;
   }
 }
-
+ 
 // ======================= summary page =======================
 function doneHref(mode) {
   const dx = state.dx;
@@ -487,5 +494,6 @@ function doneHref(mode) {
   try { sessionStorage.setItem('fixframe:done', JSON.stringify(payload)); } catch (e) { /* storage blocked */ }
   return `done.html#${encodeURIComponent(JSON.stringify(payload))}`;
 }
-
+ 
 init();
+ 
