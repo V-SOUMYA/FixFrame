@@ -120,4 +120,3 @@ scripts/                  Demo clip scene + renderer
 ## License
 
 MIT, see [LICENSE](LICENSE).
-# FixFrame

@@ -8,28 +8,166 @@
   "difficulty": "easy",
   "minutes": 25,
   "markers": [
-    { "t": 1.8, "label": "Spout drips while closed", "detail": "Steady drip with the handle off: the seat washer no longer seals.", "box": { "x": 0.555, "y": 0.35, "w": 0.075, "h": 0.2 } },
-    { "t": 5.6, "label": "Cracked O-ring at handle base", "detail": "The seal ring under the handle is cracked, so water escapes around the stem.", "box": { "x": 0.385, "y": 0.385, "w": 0.24, "h": 0.085 } },
-    { "t": 6.4, "label": "Water tracking down the body", "detail": "Seepage runs down both sides of the valve body and leaves mineral scale.", "box": { "x": 0.395, "y": 0.44, "w": 0.215, "h": 0.33 } },
-    { "t": 9.8, "label": "Shutoff valves found", "detail": "Both supply valves are reachable, so you can do this without shutting off the whole house.", "box": { "x": 0.3, "y": 0.53, "w": 0.4, "h": 0.19 } }
+    {
+      "t": 1.8,
+      "label": "Spout drips while closed",
+      "detail": "Steady drip with the handle off: the seat washer no longer seals.",
+      "box": {
+        "x": 0.555,
+        "y": 0.35,
+        "w": 0.075,
+        "h": 0.2
+      }
+    },
+    {
+      "t": 5.6,
+      "label": "Cracked O-ring at handle base",
+      "detail": "The seal ring under the handle is cracked, so water escapes around the stem.",
+      "box": {
+        "x": 0.385,
+        "y": 0.385,
+        "w": 0.24,
+        "h": 0.085
+      }
+    },
+    {
+      "t": 6.4,
+      "label": "Water tracking down the body",
+      "detail": "Seepage runs down both sides of the valve body and leaves mineral scale.",
+      "box": {
+        "x": 0.395,
+        "y": 0.44,
+        "w": 0.215,
+        "h": 0.33
+      }
+    },
+    {
+      "t": 9.8,
+      "label": "Shutoff valves found",
+      "detail": "Both supply valves are reachable, so you can do this without shutting off the whole house.",
+      "box": {
+        "x": 0.3,
+        "y": 0.53,
+        "w": 0.4,
+        "h": 0.19
+      }
+    }
   ],
   "steps": [
-    { "t": 9.8, "title": "Shut off the water", "detail": "Turn both shutoff valves under the sink clockwise until they stop. Open the faucet to drain the line." },
-    { "t": 5.6, "title": "Remove the handle", "detail": "Pry off the H cap, undo the screw underneath, and lift the handle straight up." },
-    { "t": 5.6, "title": "Unscrew the stem", "detail": "Hold the faucet body and turn the stem nut counterclockwise with an adjustable wrench. Lift out the stem." },
-    { "t": 1.8, "title": "Swap the seat washer", "detail": "Remove the brass screw at the bottom of the stem, replace the rubber washer with the same size from the kit, and put the screw back." },
-    { "t": 6.4, "title": "Replace the O-ring", "detail": "Roll off the cracked O-ring, fit the new one, and coat it lightly with plumber's grease." },
-    { "t": 1.8, "title": "Reassemble and test", "detail": "Screw the stem back in snugly, refit the handle, turn the water on slowly, and check the spout for drips." }
+    {
+      "t": 9.8,
+      "title": "Shut off the water",
+      "detail": "Turn both shutoff valves under the sink clockwise until they stop. Open the faucet to drain the line."
+    },
+    {
+      "t": 5.6,
+      "title": "Remove the handle",
+      "detail": "Pry off the H cap, undo the screw underneath, and lift the handle straight up."
+    },
+    {
+      "t": 5.6,
+      "title": "Unscrew the stem",
+      "detail": "Hold the faucet body and turn the stem nut counterclockwise with an adjustable wrench. Lift out the stem."
+    },
+    {
+      "t": 1.8,
+      "title": "Swap the seat washer",
+      "detail": "Remove the brass screw at the bottom of the stem, replace the rubber washer with the same size from the kit, and put the screw back."
+    },
+    {
+      "t": 6.4,
+      "title": "Replace the O-ring",
+      "detail": "Roll off the cracked O-ring, fit the new one, and coat it lightly with plumber's grease."
+    },
+    {
+      "t": 1.8,
+      "title": "Reassemble and test",
+      "detail": "Screw the stem back in snugly, refit the handle, turn the water on slowly, and check the spout for drips."
+    }
   ],
   "parts": [
-    { "key": "seat-washers", "name": "Faucet seat washer & screw kit", "query": "faucet seat washer assortment kit with brass screws", "qty": 1, "why": "Fixes the spout drip", "marker": 0, "required": true },
-    { "key": "o-rings", "name": "Faucet stem O-ring assortment", "query": "faucet stem o-ring assortment kit plumbing", "qty": 1, "why": "Stops the leak at the handle base", "marker": 1, "required": true },
-    { "key": "grease", "name": "Silicone plumber's grease", "query": "silicone faucet grease plumbers grease", "qty": 1, "why": "Seals and protects the new O-ring", "marker": 2, "required": false }
+    {
+      "key": "seat-washers",
+      "name": "Faucet seat washer & screw kit",
+      "query": "faucet seat washer assortment kit with brass screws",
+      "qty": 1,
+      "why": "Fixes the spout drip",
+      "marker": 0,
+      "required": true
+    },
+    {
+      "key": "o-rings",
+      "name": "Faucet stem O-ring assortment",
+      "query": "faucet stem o-ring assortment kit plumbing",
+      "qty": 1,
+      "why": "Stops the leak at the handle base",
+      "marker": 1,
+      "required": true
+    },
+    {
+      "key": "grease",
+      "name": "Silicone plumber's grease",
+      "query": "silicone faucet grease plumbers grease",
+      "qty": 1,
+      "why": "Seals and protects the new O-ring",
+      "marker": 2,
+      "required": false
+    }
   ],
-  "tools": ["Adjustable wrench", "Flathead screwdriver", "Towel"],
-  "safety": ["Shut off the water before opening the faucet."],
-  "replace": { "item": "New two-handle bathroom faucet plus install", "price": 189 },
+  "tools": [
+    "Adjustable wrench",
+    "Flathead screwdriver",
+    "Towel"
+  ],
+  "safety": [
+    "Shut off the water before opening the faucet."
+  ],
+  "replace": {
+    "item": "New two-handle bathroom faucet plus install",
+    "price": 189
+  },
   "waste_kg": 1.6,
   "water_gal_year": 3000,
-  "pro": { "type": "plumber", "est_low": 95, "est_high": 160 }
+  "pro": {
+    "type": "plumber",
+    "est_low": 95,
+    "est_high": 160
+  },
+  "media": {
+    "url": "media/demo-faucet.mp4",
+    "poster": "media/demo-poster.jpg",
+    "fixed": "media/demo-faucet-fixed.mp4"
+  },
+  "after": {
+    "fixed": {
+      "label": "Repaired faucet",
+      "sub": "No drip, dry handle base",
+      "fixed": true,
+      "confidence": 0.91,
+      "reason": "The spout stays dry with the handle closed, and no water seeps around the handle base. Both faults from the original video are resolved.",
+      "evidence": [
+        {
+          "t": 1.8,
+          "label": "Spout dry"
+        },
+        {
+          "t": 5.6,
+          "label": "New O-ring, no seepage"
+        }
+      ]
+    },
+    "leaking": {
+      "label": "Still leaking",
+      "sub": "See what happens if it isn't fixed",
+      "fixed": false,
+      "confidence": 0.88,
+      "reason": "The spout is still dripping at 0:02 and water still tracks down the valve body. The repair is not complete.",
+      "evidence": [
+        {
+          "t": 1.8,
+          "label": "Still dripping"
+        }
+      ]
+    }
+  }
 }

@@ -1,0 +1,40 @@
+{
+  "_note": "Pre-checked diagnosis for public/media/demo-chair.mp4. Uploading this exact sample clip returns this diagnosis; other uploads are diagnosed live by Claude.",
+  "item": "Wooden dining chair",
+  "category": "furniture",
+  "problem": "Loose front-left leg joint",
+  "summary": "The chair rocks when pushed because the front-left leg has worked loose where it meets the seat rail. The old glue has failed, the screw holding the joint has backed out of a stripped hole, and one corner bracket underneath is missing a screw. Re-glue, re-seat the screw and it will be as solid as new.",
+  "confidence": 0.88,
+  "difficulty": "easy",
+  "minutes": 30,
+  "markers": [
+    { "t": 2.0, "label": "Front-left leg shifts at the joint", "detail": "The whole chair rocks from this one corner when pushed.", "box": { "x": 0.365, "y": 0.615, "w": 0.06, "h": 0.075 } },
+    { "t": 5.6, "label": "Screw backing out of the joint", "detail": "The joint has opened up and the screw is no longer biting: its hole is stripped.", "box": { "x": 0.445, "y": 0.385, "w": 0.12, "h": 0.09 } },
+    { "t": 6.5, "label": "Old glue has failed", "detail": "Dried glue is flaking out of the joint, so it no longer holds.", "box": { "x": 0.455, "y": 0.43, "w": 0.1, "h": 0.07 } },
+    { "t": 9.8, "label": "Bracket missing a screw", "detail": "The front-left corner bracket has an empty screw hole.", "box": { "x": 0.23, "y": 0.6, "w": 0.1, "h": 0.17 } }
+  ],
+  "steps": [
+    { "t": 9.8, "title": "Flip the chair and remove the bracket", "detail": "Lay the chair upside down on a towel and unscrew the front-left corner bracket." },
+    { "t": 5.6, "title": "Pull out the loose screw", "detail": "Back the screw out of the joint completely and scrape the old flaking glue off both surfaces." },
+    { "t": 5.6, "title": "Fix the stripped hole", "detail": "Dip two hardwood dowel slivers in glue, tap them into the screw hole and snap them off flush." },
+    { "t": 6.5, "title": "Re-glue the joint", "detail": "Spread wood glue on the joint, press the leg back into place and drive a new #8 screw in snugly." },
+    { "t": 9.8, "title": "Refit the bracket", "detail": "Put the bracket back with two new screws, including the one that was missing." },
+    { "t": 2.0, "title": "Let it set and test", "detail": "Wait an hour for the glue to grab, then push the chair like in your video. It shouldn't move." }
+  ],
+  "parts": [
+    { "key": "wood-glue", "name": "Wood glue, 8 oz", "query": "wood glue 8 oz interior furniture", "qty": 1, "why": "Re-bonds the loose joint", "marker": 2, "required": true },
+    { "key": "wood-screws", "name": "#8 wood screws, 1¼ in", "query": "#8 wood screws 1-1/4 inch box", "qty": 1, "why": "Replaces the backed-out and missing screws", "marker": 1, "required": true },
+    { "key": "dowels", "name": "Hardwood dowel slivers", "query": "hardwood dowel pins for stripped screw holes", "qty": 1, "why": "Repairs the stripped screw hole", "marker": 1, "required": true }
+  ],
+  "tools": ["Screwdriver", "Old towel", "Utility knife"],
+  "safety": ["Let the glue set for an hour before sitting on the chair."],
+  "replace": { "item": "New wooden dining chair", "price": 289 },
+  "waste_kg": 6.5,
+  "water_gal_year": 0,
+  "pro": { "type": "handyman", "est_low": 60, "est_high": 110 },
+  "media": { "url": "media/demo-chair.mp4", "poster": "media/demo-chair-poster.jpg", "fixed": "media/demo-chair-fixed.mp4" },
+  "after": {
+    "fixed": { "label": "Repaired chair", "sub": "Solid when pushed", "fixed": true, "confidence": 0.93, "reason": "The chair stays still when pushed, the joint is closed with no gap, the screw sits flush and the bracket has both screws. All four faults from the original video are resolved.", "evidence": [{ "t": 2.0, "label": "No rocking" }, { "t": 5.6, "label": "Joint closed" }, { "t": 9.8, "label": "Bracket complete" }] },
+    "leaking": { "label": "Still wobbly", "sub": "See what happens if it isn't fixed", "fixed": false, "confidence": 0.9, "reason": "The front-left leg still shifts at 0:02 and the joint gap is still open at 0:05. The repair is not complete.", "evidence": [{ "t": 2.0, "label": "Still rocking" }] }
+  }
+}

@@ -1,20 +1,136 @@
 {
   "_note": "Sample offers used ONLY when CHANNEL3_API_KEY is not set, so the app still runs for judges. With a key, every part is searched live on Channel3.",
   "generic": [
-    { "title": "Universal repair kit", "merchant": "sample-hardware.example", "price": 9.99, "availability": "InStock", "image": null }
+    {
+      "title": "Universal repair kit",
+      "merchant": "sample-hardware.example",
+      "price": 9.99,
+      "availability": "InStock",
+      "image": null
+    }
   ],
   "seat-washers": [
-    { "title": "Flat faucet washers with brass screws (40 pc)", "merchant": "sample-hardware.example", "price": 4.97, "availability": "InStock", "image": null },
-    { "title": "Faucet washer assortment (120 pc)", "merchant": "sample-homecenter.example", "price": 6.48, "availability": "InStock", "image": null },
-    { "title": "Neoprene bibb washer and screw kit", "merchant": "sample-marketplace.example", "price": 3.79, "availability": "LimitedAvailability", "image": null }
+    {
+      "title": "Flat faucet washers with brass screws (40 pc)",
+      "merchant": "sample-hardware.example",
+      "price": 4.97,
+      "availability": "InStock",
+      "image": null
+    },
+    {
+      "title": "Faucet washer assortment (120 pc)",
+      "merchant": "sample-homecenter.example",
+      "price": 6.48,
+      "availability": "InStock",
+      "image": null
+    },
+    {
+      "title": "Neoprene bibb washer and screw kit",
+      "merchant": "sample-marketplace.example",
+      "price": 3.79,
+      "availability": "LimitedAvailability",
+      "image": null
+    }
   ],
   "o-rings": [
-    { "title": "Faucet O-ring assortment (30 pc)", "merchant": "sample-hardware.example", "price": 5.47, "availability": "InStock", "image": null },
-    { "title": "Rubber O-Ring Kit, 225 pieces, plumbing grade", "merchant": "sample-marketplace.example", "price": 7.99, "availability": "InStock", "image": null },
-    { "title": "Faucet Stem O-Ring Pack, assorted", "merchant": "sample-homecenter.example", "price": 4.28, "availability": "InStock", "image": null }
+    {
+      "title": "Faucet O-ring assortment (30 pc)",
+      "merchant": "sample-hardware.example",
+      "price": 5.47,
+      "availability": "InStock",
+      "image": null
+    },
+    {
+      "title": "Rubber O-Ring Kit, 225 pieces, plumbing grade",
+      "merchant": "sample-marketplace.example",
+      "price": 7.99,
+      "availability": "InStock",
+      "image": null
+    },
+    {
+      "title": "Faucet Stem O-Ring Pack, assorted",
+      "merchant": "sample-homecenter.example",
+      "price": 4.28,
+      "availability": "InStock",
+      "image": null
+    }
   ],
   "grease": [
-    { "title": "Silicone faucet grease, 0.5 oz", "merchant": "sample-hardware.example", "price": 3.98, "availability": "InStock", "image": null },
-    { "title": "Plumber's grease, 1 oz", "merchant": "sample-homecenter.example", "price": 4.47, "availability": "InStock", "image": null }
+    {
+      "title": "Silicone faucet grease, 0.5 oz",
+      "merchant": "sample-hardware.example",
+      "price": 3.98,
+      "availability": "InStock",
+      "image": null
+    },
+    {
+      "title": "Plumber's grease, 1 oz",
+      "merchant": "sample-homecenter.example",
+      "price": 4.47,
+      "availability": "InStock",
+      "image": null
+    }
+  ],
+  "wood-glue": [
+    {
+      "title": "Interior wood glue, 8 oz",
+      "merchant": "sample-hardware.example",
+      "price": 3.97,
+      "availability": "InStock",
+      "image": null
+    },
+    {
+      "title": "Wood glue, 16 oz bottle",
+      "merchant": "sample-homecenter.example",
+      "price": 5.48,
+      "availability": "InStock",
+      "image": null
+    },
+    {
+      "title": "Fast-set furniture glue, 4 oz",
+      "merchant": "sample-marketplace.example",
+      "price": 4.29,
+      "availability": "InStock",
+      "image": null
+    }
+  ],
+  "wood-screws": [
+    {
+      "title": "#8 x 1-1/4 in wood screws (25 pc)",
+      "merchant": "sample-hardware.example",
+      "price": 2.98,
+      "availability": "InStock",
+      "image": null
+    },
+    {
+      "title": "Wood screw assortment (100 pc)",
+      "merchant": "sample-marketplace.example",
+      "price": 6.99,
+      "availability": "InStock",
+      "image": null
+    },
+    {
+      "title": "#8 flat head screws, 1-1/4 in (50 pc)",
+      "merchant": "sample-homecenter.example",
+      "price": 4.18,
+      "availability": "InStock",
+      "image": null
+    }
+  ],
+  "dowels": [
+    {
+      "title": "Hardwood dowel pins, 3/16 in (50 pc)",
+      "merchant": "sample-hardware.example",
+      "price": 2.47,
+      "availability": "InStock",
+      "image": null
+    },
+    {
+      "title": "Birch dowel pin assortment (100 pc)",
+      "merchant": "sample-homecenter.example",
+      "price": 4.97,
+      "availability": "InStock",
+      "image": null
+    }
   ]
 }

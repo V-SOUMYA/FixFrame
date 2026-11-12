@@ -7,8 +7,14 @@
   <script>
     function tbFallback(el) { const list = (el.dataset.fallbacks || '').split(' ').filter(Boolean); if (!list.length) return; el.dataset.fallbacks = list.slice(1).join(' '); el.href = list[0]; }
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/vendor/fonts/cormorant-garamond/500.css" />
+  <link rel="stylesheet" href="/vendor/fonts/cormorant-garamond/600.css" />
+  <link rel="stylesheet" href="/vendor/fonts/cormorant-garamond/500-italic.css" />
+  <link rel="stylesheet" href="/vendor/fonts/cormorant-garamond/600-italic.css" />
+  <link rel="stylesheet" href="/vendor/fonts/inter/400.css" />
+  <link rel="stylesheet" href="/vendor/fonts/inter/500.css" />
+  <link rel="stylesheet" href="/vendor/fonts/inter/600.css" />
+  <link rel="stylesheet" href="/vendor/fonts/inter/700.css" />
   <link rel="stylesheet" href="/vendor/ag-grid/styles/ag-grid.css" data-fallbacks="../node_modules/ag-grid-community/styles/ag-grid.css https://cdn.jsdelivr.net/npm/ag-grid-community@32.3.3/styles/ag-grid.css" onerror="tbFallback(this)" />
   <link rel="stylesheet" href="/vendor/ag-grid/styles/ag-theme-quartz.css" data-fallbacks="../node_modules/ag-grid-community/styles/ag-theme-quartz.css https://cdn.jsdelivr.net/npm/ag-grid-community@32.3.3/styles/ag-theme-quartz.css" onerror="tbFallback(this)" />
   <link rel="stylesheet" href="styles.css" />
@@ -44,7 +50,11 @@
         <h3>Anything we should know?</h3>
         <textarea class="note" id="note" rows="3" placeholder="e.g. Bathroom faucet drips even when it's off. Started last week."></textarea>
         <h3 style="margin-top:6px">Or try the demo</h3>
-        <button class="demo-card" id="demoBtn" type="button">
+        <button class="demo-card" data-demo-item="chair" type="button">
+          <img src="media/demo-chair-poster.jpg" alt="" />
+          <span><b>Wobbly dining chair</b><small>11-second clip · pre-checked diagnosis</small></span>
+        </button>
+        <button class="demo-card" data-demo-item="faucet" type="button">
           <img src="media/demo-poster.jpg" alt="" />
           <span><b>Leaky bathroom faucet</b><small>12-second clip · pre-checked diagnosis</small></span>
         </button>

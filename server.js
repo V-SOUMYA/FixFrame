@@ -4,7 +4,7 @@ const fs = require('fs');
 const crypto = require('crypto');
 const express = require('express');
 const multer = require('multer');
- 
+
 const ai = require('./src/ai');
 const channel3 = require('./src/channel3');
 const paypal = require('./src/paypal');
@@ -23,13 +23,13 @@ SAMPLE_BY_HASH.b3ce891f9b77ad7f1103c15bb592ff8e406e7f68 = 'chair';
 // Without an AI key, fall back to matching the sample by file name.
 const sampleByName = (name = '') => (/chair|stool|wobbl/i.test(name) ? 'chair' : /faucet|tap|sink|drip|leak/i.test(name) ? 'faucet' : null);
 const pros = require('./data/pros.json');
- 
+
 const app = express();
 app.use(express.json({ limit: '200kb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/vendor/ag-grid', express.static(path.join(__dirname, 'node_modules/ag-grid-community')));
 app.use('/vendor/fonts', express.static(path.join(__dirname, 'node_modules/@fontsource')));
- 
+
 const UPLOADS = path.join(__dirname, 'uploads');
 fs.mkdirSync(UPLOADS, { recursive: true });
 const upload = multer({
@@ -37,11 +37,11 @@ const upload = multer({
   limits: { fileSize: 80 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => cb(null, /^(video|image)\//.test(file.mimetype)),
 });
- 
+
 const DEMO_VIDEO = path.join(__dirname, 'public/media/demo-faucet.mp4');
 const jobs = new Map(); // id -> { diagnosis, file, mimetype, offers, pro }
 const orders = new Map(); // demo-mode orders
- 
+
 const newId = (p) => `${p}-${crypto.randomBytes(5).toString('hex').toUpperCase()}`;
 const round2 = (n) => Math.round(n * 100) / 100;
 const wrap = (fn) => (req, res) => fn(req, res).catch((err) => {
@@ -53,7 +53,7 @@ function job(req, res) {
   if (!j) res.status(404).json({ error: 'That diagnosis has expired. Please analyze the video again.' });
   return j;
 }
- 
+
 // ---------------- config + demo ----------------
 app.get('/api/config', (_req, res) => res.json({
   aiEnabled: ai.aiEnabled(),
@@ -63,14 +63,14 @@ app.get('/api/config', (_req, res) => res.json({
   paypalClientId: process.env.PAYPAL_CLIENT_ID || null,
   currency: process.env.CURRENCY || 'USD',
 }));
- 
+
 app.get('/api/demo', (req, res) => {
   const demo = DEMOS[req.query.item] || DEMOS.faucet;
   const id = newId('JOB');
   jobs.set(id, { diagnosis: demo.diagnosis, file: demo.file, mimetype: 'video/mp4', demo: true });
   res.json({ id, diagnosis: demo.diagnosis, source: 'demo', media: { url: demo.diagnosis.media.url, poster: demo.diagnosis.media.poster, type: 'video' } });
 });
- 
+
 // ---------------- diagnose an upload ----------------
 app.post('/api/diagnose', upload.single('media'), wrap(async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'Upload a short video or photo of the broken thing.' });
@@ -88,7 +88,7 @@ app.post('/api/diagnose', upload.single('media'), wrap(async (req, res) => {
   jobs.set(id, { diagnosis, file: req.file.path, mimetype: req.file.mimetype });
   res.json({ id, diagnosis, source: 'claude' });
 }));
- 
+
 // ---------------- parts (Channel3) ----------------
 app.get('/api/jobs/:id/parts', wrap(async (req, res) => {
   const j = job(req, res);
@@ -97,7 +97,7 @@ app.get('/api/jobs/:id/parts', wrap(async (req, res) => {
   j.offers = Object.fromEntries(parts.map((p) => [p.key, p.offers]));
   res.json({ parts });
 }));
- 
+
 // Visual search: crop the marked evidence from the video and search Channel3 by image.
 app.post('/api/jobs/:id/visual-search', wrap(async (req, res) => {
   const j = job(req, res);
@@ -110,7 +110,7 @@ app.post('/api/jobs/:id/visual-search', wrap(async (req, res) => {
   j.offers = { ...(j.offers || {}), [part.key]: result.offers };
   res.json({ partKey: part.key, crop: `data:image/jpeg;base64,${crop}`, ...result });
 }));
- 
+
 // ---------------- PayPal: parts checkout (capture now) ----------------
 function pickedItems(j, selections) {
   return selections.map((s) => {
@@ -121,7 +121,7 @@ function pickedItems(j, selections) {
     return { name: `${part.name}`, description: `${o.title} · ${o.merchant}`.slice(0, 127), sku: part.key, price: round2(o.price), qty: part.qty || 1 };
   });
 }
- 
+
 app.post('/api/orders/parts', wrap(async (req, res) => {
   const j = job(req, res);
   if (!j) return;
@@ -136,7 +136,7 @@ app.post('/api/orders/parts', wrap(async (req, res) => {
   const order = await paypal.createOrder(items, { intent: 'CAPTURE', description: `FixFrame parts: ${j.diagnosis.problem}` });
   res.json({ id: order.id, demo: false, total });
 }));
- 
+
 app.post('/api/orders/:id/capture', wrap(async (req, res) => {
   const { id } = req.params;
   if (id.startsWith('DEMO-')) {
@@ -148,7 +148,7 @@ app.post('/api/orders/:id/capture', wrap(async (req, res) => {
   const cap = data.purchase_units?.[0]?.payments?.captures?.[0];
   res.json({ id: data.id, status: data.status, demo: false, total: cap ? Number(cap.amount.value) : null, captureId: cap ? cap.id : null });
 }));
- 
+
 // ---------------- pros: pay only if it's fixed ----------------
 app.get('/api/jobs/:id/pros', (req, res) => {
   const j = job(req, res);
@@ -161,7 +161,7 @@ app.get('/api/jobs/:id/pros', (req, res) => {
   j.pros = list;
   res.json({ pros: list });
 });
- 
+
 app.post('/api/pro/orders', wrap(async (req, res) => {
   const j = job(req, res);
   if (!j) return;
@@ -181,7 +181,7 @@ app.post('/api/pro/orders', wrap(async (req, res) => {
   j.pro.orderId = order.id;
   res.json({ id: order.id, demo: false, total: pro.quote });
 }));
- 
+
 app.post('/api/pro/orders/:id/authorize', wrap(async (req, res) => {
   const j = job(req, res);
   if (!j || !j.pro) return;
@@ -194,13 +194,13 @@ app.post('/api/pro/orders/:id/authorize', wrap(async (req, res) => {
   Object.assign(j.pro, { authorizationId: auth.id, status: 'HELD', expires: auth.expiration_time });
   res.json({ status: 'HELD', authorizationId: auth.id, demo: false, pro: j.pro });
 }));
- 
+
 // Verify the repair from an "after" clip, then capture or keep the hold.
 const DEMO_AFTER_FALLBACK = {
   fixed: { fixed: true, confidence: 0.91, reason: 'The spout stays dry with the handle closed, and no water seeps around the handle base. Both faults from the original video are resolved.', evidence: [{ t: 1.8, label: 'Spout dry' }, { t: 5.6, label: 'New O-ring, no seepage' }] },
   leaking: { fixed: false, confidence: 0.88, reason: 'The spout is still dripping at 0:02 and water still tracks down the valve body. The repair is not complete.', evidence: [{ t: 1.8, label: 'Still dripping' }] },
 };
- 
+
 async function settle(j, verdict) {
   j.pro.verification = verdict;
   if (!verdict.fixed) {
@@ -215,7 +215,7 @@ async function settle(j, verdict) {
   j.pro.status = 'CAPTURED';
   return { verdict, payment: { status: cap.status, demo: false, captureId: cap.id, amount: Number(cap.amount?.value || j.pro.quote) } };
 }
- 
+
 app.post('/api/pro/verify', upload.single('media'), wrap(async (req, res) => {
   const j = job(req, res);
   if (!j) return;
@@ -230,7 +230,7 @@ app.post('/api/pro/verify', upload.single('media'), wrap(async (req, res) => {
   else return res.status(400).json({ error: 'Live verification needs ANTHROPIC_API_KEY. Use one of the demo after-clips instead.' });
   res.json(await settle(j, verdict));
 }));
- 
+
 app.post('/api/pro/void', wrap(async (req, res) => {
   const j = job(req, res);
   if (!j || !j.pro || !j.pro.authorizationId) return;
@@ -238,7 +238,7 @@ app.post('/api/pro/void', wrap(async (req, res) => {
   j.pro.status = 'VOIDED';
   res.json({ status: 'VOIDED', message: 'Hold released. You were not charged.' });
 }));
- 
+
 const PORT = process.env.PORT || 3000;
 if (require.main === module) {
   app.listen(PORT, () => {
@@ -249,4 +249,3 @@ if (require.main === module) {
   });
 }
 module.exports = app;
- 

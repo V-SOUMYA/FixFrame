@@ -1,0 +1,540 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../../node_modules/@fontsource/cormorant-garamond/600.css" />
+<link rel="stylesheet" href="../../node_modules/@fontsource/cormorant-garamond/600-italic.css" />
+<link rel="stylesheet" href="../../node_modules/@fontsource/inter/500.css" />
+<link rel="stylesheet" href="../../node_modules/@fontsource/inter/700.css" />
+<style>
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+  #stage { position: absolute; inset: 0; overflow: hidden; font-family: Inter, sans-serif; }
+  #stage svg { position: absolute; inset: 0; }
+  .cap { position: absolute; left: 50%; bottom: 70px; transform: translateX(-50%); padding: 14px 34px; border-radius: 14px;
+    background: rgba(246, 242, 230, .95); color: #1e2a23; font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 600; font-size: 58px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.25); white-space: nowrap; }
+  .stamp { position: absolute; white-space: nowrap; font-family: Inter, sans-serif; font-weight: 700; color: #c43a2a; border: 10px solid #c43a2a; border-radius: 18px; padding: 6px 34px; font-size: 140px; letter-spacing: .02em; }
+  .vhs { position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(255,255,255,.07) 0 2px, transparent 2px 6px); mix-blend-mode: screen; }
+  .vhs-t { position: absolute; top: 50px; left: 70px; color: #fff; font: 700 64px/1 'DejaVu Sans Mono', monospace; text-shadow: 3px 0 #f0f, -3px 0 #0ff; }
+  .grain { position: absolute; inset: 0; pointer-events: none; opacity: .08; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  /* laptop browser mock */
+  .browser { position: absolute; inset: 0; background: #f4f1ea; font-family: Inter, sans-serif; color: #222; }
+  .bar { height: 88px; background: #e4ded2; display: flex; align-items: center; gap: 18px; padding: 0 34px; }
+  .dots i { display: inline-block; width: 18px; height: 18px; border-radius: 50%; margin-right: 10px; background: #c9bfae; }
+  .url { flex: 1; height: 48px; border-radius: 24px; background: #fff; display: flex; align-items: center; padding: 0 26px; font-size: 24px; color: #666; }
+  .shop-head { display: flex; justify-content: space-between; align-items: center; padding: 34px 90px 10px; }
+  .shop-head b { font-family: 'Cormorant Garamond', serif; font-size: 60px; }
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; padding: 30px 90px; }
+  .card { background: #fff; border-radius: 22px; padding: 26px; box-shadow: 0 8px 24px rgba(0,0,0,.08); }
+  .card .ph { height: 330px; border-radius: 16px; background: #efe8db; position: relative; overflow: hidden; }
+  .card h4 { margin: 22px 0 6px; font-size: 30px; font-weight: 500; }
+  .price { font-size: 64px; font-weight: 700; color: #b5502a; transform-origin: left center; display: inline-block; }
+  .ship { margin: 10px 90px; padding: 22px 30px; border-radius: 16px; background: #fde9c8; font-size: 34px; font-weight: 700; color: #7a4a00; display: inline-block; }
+  .player { position: absolute; left: 150px; top: 120px; width: 1620px; height: 680px; background: #151515; border-radius: 18px; overflow: hidden; }
+  .ptitle { position: absolute; left: 150px; top: 818px; font-size: 44px; font-weight: 700; color: #222; }
+  .pmeta { position: absolute; left: 150px; top: 876px; font-size: 26px; color: #777; }
+  .pbar { position: absolute; left: 30px; right: 30px; bottom: 30px; height: 10px; border-radius: 5px; background: #444; }
+  .pbar i { position: absolute; left: 0; top: 0; bottom: 0; background: #e33; border-radius: 5px; }
+  .ptime { position: absolute; right: 40px; bottom: 54px; color: #fff; font-size: 26px; }
+  /* menu */
+  .menu { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 46px; }
+  .menu h2 { margin: 0; color: #f6f2e6; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 86px; font-weight: 600; text-shadow: 0 4px 20px rgba(0,0,0,.5); }
+  .opts { display: flex; gap: 40px; }
+  .opt { width: 460px; height: 300px; border-radius: 26px; background: rgba(246, 242, 230, .94); display: flex; flex-direction: column; justify-content: center; padding: 0 42px; box-sizing: border-box; color: #1e2a23; border: 5px solid transparent; transition: none; }
+  .opt .k { font-size: 30px; font-weight: 700; letter-spacing: .14em; color: #b5502a; }
+  .opt .l { font-family: 'Cormorant Garamond', serif; font-size: 62px; font-weight: 600; line-height: 1.05; margin-top: 10px; }
+  .opt.dim { opacity: .35; }
+  .opt.hot { border-color: #b5502a; box-shadow: 0 0 0 10px rgba(181,80,42,.25); }
+  .cursor { position: absolute; width: 52px; height: 52px; }
+  .ring { position: absolute; width: 40px; height: 40px; border-radius: 50%; border: 5px solid #b5502a; }
+  /* end card */
+  .end { position: absolute; inset: 0; background: #dfe5d6; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #1e2a23; }
+  .end .logo { display: flex; align-items: center; gap: 22px; font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 96px; }
+  .end .logo i { width: 82px; height: 82px; border-radius: 20px; background: #23362c; display: grid; place-items: center; }
+  .end h1 { font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 130px; line-height: 1; margin: 46px 0 0; text-align: center; }
+  .end h1 em { color: #b5502a; }
+  .end .stack { margin-top: 70px; font-size: 26px; letter-spacing: .24em; text-transform: uppercase; color: #4a574e; font-weight: 500; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script>
+// ===================== helpers =====================
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, k) => a + (b - a) * k;
+const ease = (k) => (k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2);
+const easeOut = (k) => 1 - Math.pow(1 - k, 3);
+const easeIn = (k) => k * k * k;
+const seg = (t, a, b, f = ease) => f(clamp((t - a) / (b - a)));
+function key(t, frames, f = ease) {
+  if (t <= frames[0][0]) return frames[0][1];
+  for (let i = 1; i < frames.length; i++) {
+    const [t1, v1] = frames[i];
+    const [t0, v0] = frames[i - 1];
+    if (t <= t1) {
+      const k = f((t - t0) / (t1 - t0));
+      return Array.isArray(v0) ? v0.map((x, j) => lerp(x, v1[j], k)) : lerp(v0, v1, k);
+    }
+  }
+  return frames[frames.length - 1][1];
+}
+function rnd(seed) { let s = seed * 9301 + 49297; s = (s * 233280 + 12345) % 233280; return s / 233280; }
+const $ = (id) => document.getElementById(id);
+const stage = $('stage');
+
+// ===================== Frank =====================
+const C = { skin: '#f0c29b', skin2: '#d9a57f', card: '#c8964a', card2: '#a8772f', pants: '#5d4636', pants2: '#4a3729', slip: '#8b3a2a', hair: '#a5a29b', ink: '#2a2622', shirt: '#efe9dc' };
+function limb(len, w, col) { return `<line x1="0" y1="0" x2="0" y2="${len}" stroke="${col}" stroke-width="${w}" stroke-linecap="round"/>`; }
+function frankSVG(p) {
+  return `<g id="${p}">
+    <g id="${p}-lL">${limb(96, 36, C.pants2)}<g id="${p}-kL" transform="translate(0 96)">${limb(88, 32, C.pants2)}<ellipse cx="16" cy="98" rx="30" ry="14" fill="${C.slip}" opacity=".85"/></g></g>
+    <g id="${p}-t">
+      <g id="${p}-aL" transform="translate(4 -128)">${limb(78, 28, C.card2)}<g id="${p}-eL" transform="translate(0 78)">${limb(70, 24, C.card2)}<circle cy="78" r="17" fill="${C.skin2}"/></g></g>
+      <path d="M-44 -150 Q -48 -40 -40 14 L 46 14 Q 52 -40 44 -150 Q 0 -168 -44 -150 Z" fill="${C.card}"/>
+      <path d="M-6 -150 L 2 -110 L 12 -150 Z" fill="${C.shirt}"/>
+      <g fill="${C.card2}"><circle cx="18" cy="-90" r="4"/><circle cx="18" cy="-58" r="4"/><circle cx="18" cy="-26" r="4"/></g>
+      <rect x="-44" y="-2" width="90" height="16" rx="6" fill="${C.card2}" opacity=".5"/>
+      <g id="${p}-h" transform="translate(6 -168)">
+        <rect x="-14" y="-10" width="28" height="26" rx="10" fill="${C.skin2}"/>
+        <ellipse cx="0" cy="-58" rx="56" ry="60" fill="${C.skin}"/>
+        <ellipse cx="-44" cy="-56" rx="12" ry="18" fill="${C.skin2}"/>
+        <path d="M-58 -64 Q -64 -90 -46 -98 M -60 -46 Q -66 -40 -60 -30" stroke="${C.hair}" stroke-width="12" stroke-linecap="round" fill="none"/>
+        <ellipse cx="-6" cy="-102" rx="22" ry="8" fill="#fff" opacity=".35"/>
+        <g id="${p}-face">
+          <path id="${p}-brow" d="M14 -88 Q 30 -96 46 -88" stroke="${C.hair}" stroke-width="7" stroke-linecap="round" fill="none"/>
+          <circle cx="30" cy="-66" r="17" fill="#fff" fill-opacity=".25" stroke="${C.ink}" stroke-width="4"/>
+          <path d="M13 -66 L -10 -64" stroke="${C.ink}" stroke-width="4"/>
+          <g id="${p}-eyeN"><circle cx="33" cy="-66" r="5" fill="${C.ink}"/></g>
+          <g id="${p}-eyeO" style="display:none"><circle cx="31" cy="-66" r="11" fill="#fff" stroke="${C.ink}" stroke-width="3"/><circle cx="33" cy="-66" r="4.5" fill="${C.ink}"/></g>
+          <g id="${p}-eyeX" style="display:none"><path d="M24 -72 L 38 -60 M 38 -72 L 24 -60" stroke="${C.ink}" stroke-width="4" stroke-linecap="round"/></g>
+          <g id="${p}-eyeH" style="display:none"><path d="M22 -64 Q 31 -74 40 -64" stroke="${C.ink}" stroke-width="4" stroke-linecap="round" fill="none"/></g>
+          <path d="M50 -50 Q 58 -40 52 -32" stroke="${C.skin2}" stroke-width="7" stroke-linecap="round" fill="none"/>
+          <g id="${p}-mSmile"><path d="M18 -18 Q 34 -8 48 -20" stroke="${C.ink}" stroke-width="5" stroke-linecap="round" fill="none"/></g>
+          <g id="${p}-mO" style="display:none"><ellipse cx="34" cy="-14" rx="10" ry="13" fill="${C.ink}"/></g>
+          <g id="${p}-mFlat" style="display:none"><path d="M20 -16 L 46 -18" stroke="${C.ink}" stroke-width="5" stroke-linecap="round"/></g>
+          <g id="${p}-mWob" style="display:none"><path d="M18 -16 Q 24 -22 30 -16 T 42 -16 T 52 -18" stroke="${C.ink}" stroke-width="4" stroke-linecap="round" fill="none"/></g>
+          <g id="${p}-mGrin" style="display:none"><path d="M16 -24 Q 34 -2 52 -26 Z" fill="${C.ink}"/><path d="M20 -22 L 48 -24" stroke="#fff" stroke-width="5"/></g>
+          <path d="M8 -34 Q 22 -46 36 -36 Q 50 -46 62 -32 Q 56 -22 36 -28 Q 16 -22 8 -34 Z" fill="${C.hair}"/>
+          <g id="${p}-sweat" style="display:none"><path d="M-30 -110 Q -24 -96 -30 -88 Q -38 -96 -30 -110 Z" fill="#9fd3f0"/></g>
+          <g id="${p}-band" style="display:none"><g transform="translate(-6 -96) rotate(-24)"><rect x="-26" y="-9" width="52" height="18" rx="7" fill="#f2c9a0" stroke="#d8a77d" stroke-width="2"/><rect x="-8" y="-9" width="16" height="18" fill="#e7b48a"/></g></g>
+        </g>
+      </g>
+      <g id="${p}-aR" transform="translate(4 -128)">${limb(78, 30, C.card)}<g id="${p}-eR" transform="translate(0 78)">${limb(70, 26, C.card)}<circle cy="78" r="18" fill="${C.skin}"/><g id="${p}-held"></g></g></g>
+    </g>
+    <g id="${p}-lR">${limb(96, 38, C.pants)}<g id="${p}-kR" transform="translate(0 96)">${limb(88, 34, C.pants)}<ellipse cx="16" cy="98" rx="32" ry="15" fill="${C.slip}"/></g></g>
+  </g>`;
+}
+const FACES = { eye: ['N', 'O', 'X', 'H'], mouth: ['Smile', 'O', 'Flat', 'Wob', 'Grin'] };
+function pose(p, s) {
+  const g = (id) => $(`${p}-${id}`);
+  $(p).setAttribute('transform', `translate(${s.x} ${s.y}) rotate(${s.rot || 0}) scale(${s.sc || 1})`);
+  g('t').setAttribute('transform', `rotate(${-(s.torso || 0)})`);
+  g('h').setAttribute('transform', `translate(6 -168) rotate(${-(s.head || 0)})`);
+  const arm = (k, [sh, el]) => { g('a' + k).setAttribute('transform', `translate(4 -128) rotate(${-sh})`); g('e' + k).setAttribute('transform', `translate(0 78) rotate(${-el})`); };
+  arm('L', s.aL || [8, 10]); arm('R', s.aR || [-6, 10]);
+  const leg = (k, [h, kn]) => { g('l' + k).setAttribute('transform', `rotate(${-h})`); g('k' + k).setAttribute('transform', `translate(0 96) rotate(${kn})`); };
+  leg('L', s.lL || [0, 0]); leg('R', s.lR || [0, 0]);
+  FACES.eye.forEach((e) => (g('eye' + e).style.display = (s.eye || 'N') === e ? '' : 'none'));
+  FACES.mouth.forEach((m) => (g('m' + m).style.display = (s.mouth || 'Smile') === m ? '' : 'none'));
+  g('sweat').style.display = s.sweat ? '' : 'none';
+  g('band').style.display = s.band ? '' : 'none';
+  g('brow').setAttribute('transform', `translate(0 ${-(s.brow || 0)})`);
+  g('held').innerHTML = s.held || '';
+}
+const STAND = { torso: 0, head: 0, aL: [8, 10], aR: [-6, 10], lL: [2, 0], lR: [-2, 0] };
+const SIT = { torso: -6, head: 0, aL: [20, 40], aR: [26, 50], lL: [88, 92], lR: [92, 88] };
+function blend(a, b, k) {
+  const o = { ...b };
+  for (const key in a) { if (typeof a[key] === 'number' && typeof b[key] === 'number') o[key] = lerp(a[key], b[key], k); else if (Array.isArray(a[key]) && Array.isArray(b[key])) o[key] = a[key].map((v, i) => lerp(v, b[key][i], k)); }
+  return o;
+}
+function walk(t, speed = 6) { const s = Math.sin(t * speed); return { lL: [s * 24, Math.max(0, -s) * 30], lR: [-s * 24, Math.max(0, s) * 30], aL: [-s * 18, 14], aR: [s * 18, 14], bob: Math.abs(Math.cos(t * speed)) * 6 }; }
+
+// ===================== props =====================
+const FLOOR = 900;
+function room() {
+  return `
+  <defs>
+    <linearGradient id="wallG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9a98a"/><stop offset="1" stop-color="#a39377"/></linearGradient>
+    <pattern id="paper" width="120" height="120" patternUnits="userSpaceOnUse"><rect width="120" height="120" fill="none"/><path d="M60 0 V120" stroke="#9c8c70" stroke-width="10" opacity=".35"/><circle cx="20" cy="30" r="6" fill="#8f7f63" opacity=".25"/><circle cx="100" cy="90" r="6" fill="#8f7f63" opacity=".25"/></pattern>
+    <linearGradient id="floorG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7a5c41"/><stop offset="1" stop-color="#4f3a28"/></linearGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#wallG)"/>
+  <rect width="1920" height="${FLOOR}" fill="url(#paper)"/>
+  <!-- stains -->
+  <ellipse cx="300" cy="140" rx="140" ry="70" fill="#8a7454" opacity=".35"/>
+  <ellipse cx="1560" cy="300" rx="90" ry="140" fill="#8a7454" opacity=".25"/>
+  <path d="M1180 0 L1170 90 L1200 150 L1180 240" stroke="#5e5040" stroke-width="5" fill="none"/>
+  <!-- peeling wallpaper corner -->
+  <path d="M1920 0 L1760 0 Q 1800 90 1920 130 Z" fill="#cbb995"/><path d="M1760 0 Q 1800 90 1920 130 L 1920 160 Q 1790 120 1760 0 Z" fill="#7a6a50" opacity=".5"/>
+  <!-- window with tape -->
+  <rect x="1300" y="150" width="380" height="330" rx="10" fill="#cfe2e4" stroke="#6a5a44" stroke-width="18"/>
+  <path d="M1490 150 V480 M1300 315 H1680" stroke="#6a5a44" stroke-width="12"/>
+  <path d="M1330 180 L1460 290 M1460 180 L1330 290" stroke="#e7dcb6" stroke-width="22" opacity=".9"/>
+  <!-- crooked picture -->
+  <g transform="translate(560 230) rotate(-9)"><rect x="-80" y="-60" width="160" height="120" fill="#6a5a44"/><rect x="-66" y="-46" width="132" height="92" fill="#d9cfa9"/><path d="M-50 30 L -10 -10 L 20 20 L 40 0 L 60 30 Z" fill="#8aa07a"/></g>
+  <!-- ceiling drip + bucket -->
+  <ellipse cx="980" cy="12" rx="50" ry="16" fill="#7a6a50" opacity=".5"/>
+  <circle id="drip" cx="980" cy="30" r="9" fill="#9fd3f0"/>
+  <g transform="translate(980 900)"><path d="M-50 -90 L 50 -90 L 40 0 L -40 0 Z" fill="#8f979b"/><ellipse cx="0" cy="-90" rx="50" ry="12" fill="#6f777b"/><ellipse cx="0" cy="-88" rx="40" ry="8" fill="#9fd3f0" opacity=".7"/></g>
+  <!-- floor -->
+  <rect y="${FLOOR}" width="1920" height="${1080 - FLOOR}" fill="url(#floorG)"/>
+  <g stroke="#3e2d1f" stroke-width="3" opacity=".6"><path d="M0 950 H1920 M0 1010 H1920 M240 900 V950 M760 950 V1010 M1300 900 V950 M1640 950 V1010"/></g>
+  <rect y="${FLOOR - 16}" width="1920" height="18" fill="#5b4532"/>
+  <!-- taped lamp -->
+  <g transform="translate(1760 900)"><rect x="-8" y="-330" width="16" height="330" fill="#3c3a37"/><rect x="-22" y="-210" width="44" height="26" fill="#d6cfa4" transform="rotate(-20 0 -197)"/><path d="M-70 -330 L 70 -330 L 40 -420 L -40 -420 Z" fill="#e3c27d"/><ellipse cx="0" cy="0" rx="60" ry="12" fill="#3c3a37"/></g>
+  <!-- crate table with coin jar -->
+  <g transform="translate(720 900)"><rect x="-110" y="-160" width="220" height="160" fill="#a07a4c" stroke="#6f5232" stroke-width="6"/><path d="M-110 -110 H110 M-110 -60 H110" stroke="#6f5232" stroke-width="5"/>
+    <g transform="translate(20 -160)"><rect x="-44" y="-96" width="88" height="96" rx="14" fill="#cfe4e6" opacity=".8" stroke="#8fa9ab" stroke-width="4"/><rect x="-48" y="-108" width="96" height="16" rx="5" fill="#b38f4a"/><g fill="#d9b245" stroke="#a8862b" stroke-width="2"><ellipse cx="-14" cy="-12" rx="16" ry="6"/><ellipse cx="12" cy="-18" rx="16" ry="6"/><ellipse cx="0" cy="-28" rx="16" ry="6"/></g></g></g>`;
+}
+function chairSVG(id, extra = '') {
+  // Side view; seat top at y=0 local, legs to floor (+110), back posts up on the left.
+  return `<g id="${id}">
+    <g id="${id}-back"><rect x="-82" y="-250" width="18" height="260" rx="7" fill="#7a4a26"/><rect x="-90" y="-236" width="26" height="40" rx="8" fill="#8f5a30"/><rect x="-90" y="-160" width="26" height="34" rx="8" fill="#8f5a30"/></g>
+    <g id="${id}-legB"><rect x="-78" y="10" width="18" height="102" rx="6" fill="#6b3f20"/></g>
+    <g id="${id}-legF"><rect x="62" y="10" width="18" height="102" rx="6" fill="#7a4a26"/></g>
+    <rect x="-90" y="-6" width="182" height="22" rx="8" fill="#a26a3c"/>
+    <rect x="-80" y="58" width="150" height="10" rx="4" fill="#6b3f20" opacity=".8"/>
+    ${extra}
+  </g>`;
+}
+function caption(text, t, a, b) {
+  const k = Math.min(seg(t, a, a + .3, easeOut), 1 - seg(t, b - .25, b));
+  if (k <= 0) return '';
+  return `<div class="cap" style="opacity:${k};transform:translate(-50%, ${(1 - k) * 20}px)">${text}</div>`;
+}
+function stamp(text, t, a, x, y, rot = -8) {
+  if (t < a) return '';
+  const k = seg(t, a, a + .18, easeOut);
+  return `<div class="stamp" style="left:${x}px;top:${y}px;transform:rotate(${rot}deg) scale(${lerp(2.4, 1, k)});opacity:${k}">${text}</div>`;
+}
+function dust(cx, cy, t, a) {
+  if (t < a || t > a + 1.2) return '';
+  const k = (t - a) / 1.2;
+  let s = '';
+  for (let i = 0; i < 9; i++) {
+    const ang = (i / 9) * Math.PI + Math.PI;
+    const r = 30 + k * 170 * (0.6 + rnd(i + 3) * .6);
+    s += `<circle cx="${cx + Math.cos(ang) * r}" cy="${cy + Math.sin(ang) * r * .45}" r="${22 + k * 30}" fill="#d8ccb2" opacity="${(1 - k) * .8}"/>`;
+  }
+  return s;
+}
+function burst(text, cx, cy, t, a, dur = .8) {
+  if (t < a || t > a + dur) return '';
+  const k = seg(t, a, a + .12, easeOut);
+  let pts = '';
+  for (let i = 0; i < 24; i++) { const r = i % 2 ? 120 : 190; const an = (i / 24) * Math.PI * 2; pts += `${cx + Math.cos(an) * r * k},${cy + Math.sin(an) * r * k * .75} `; }
+  return `<polygon points="${pts}" fill="#f6d34a" stroke="#1e1e1e" stroke-width="6"/><text x="${cx}" y="${cy + 26}" text-anchor="middle" font-family="Inter" font-weight="700" font-size="${78 * k}" fill="#c43a2a" stroke="#1e1e1e" stroke-width="3">${text}</text>`;
+}
+function vhs(t, a, b) { return t >= a && t <= b ? `<div class="vhs"></div><div class="vhs-t">◀◀ REWIND</div>` : ''; }
+function shake(t, a, amp = 14, dur = .45) {
+  if (t < a || t > a + dur) return [0, 0];
+  const k = 1 - (t - a) / dur;
+  return [Math.sin(t * 90) * amp * k, Math.cos(t * 77) * amp * k];
+}
+
+// ===================== scenes =====================
+const S = {};
+
+// ---- 1. Meet Frank, the fall, the menu ----
+S.intro = {
+  dur: 13.5,
+  build() {
+    stage.innerHTML = `<svg viewBox="0 0 1920 1080" id="sv"><g id="world">${room()}<g id="chairW" transform="translate(1060 790)">${chairSVG('ch')}</g><g id="dustL"></g>${frankSVG('F')}<g id="fx"></g><g id="coin"></g></g></svg><div id="ov"></div><div class="grain"></div>`;
+  },
+  update(t) {
+    // drip
+    const dk = (t % 1.6) / 1.6;
+    $('drip').setAttribute('cy', 30 + dk * 760); $('drip').setAttribute('opacity', dk < .95 ? 1 : 0);
+    let fx = '', ov = '';
+    // Frank: counting coins (0-5.5), walk (5.5-7.6), turn+sit (7.6-8.6), crash 9.0
+    let P;
+    if (t < 5.6) {
+      const c = Math.sin(t * 5) * .5 + .5;
+      P = { ...STAND, x: 520, y: FLOOR - 197, aR: [62 + c * 14, 30 + c * 22], aL: [30, 60], head: -10 + c * 4, mouth: t > 3.2 ? 'Grin' : 'Smile' };
+      if (t > .6 && t < 5.2 && (t * 2.5) % 1 < .5) {
+        const k = ((t * 2.5) % 1) * 2;
+        $('coin').innerHTML = `<ellipse cx="${740}" cy="${600 + k * 90}" rx="13" ry="5" fill="#d9b245" stroke="#a8862b" stroke-width="2"/>`;
+      } else $('coin').innerHTML = '';
+    } else if (t < 7.6) {
+      $('coin').innerHTML = '';
+      const k = seg(t, 5.6, 7.6, (x) => x);
+      const w = walk(t);
+      P = { ...STAND, ...w, x: lerp(520, 1010, k), y: FLOOR - 197 - w.bob, mouth: 'Smile' };
+    } else {
+      const k = seg(t, 7.6, 8.5);
+      P = blend({ ...STAND, x: 1010, y: FLOOR - 197 }, { ...SIT, x: 1000, y: 780 }, k);
+      P.mouth = 'Smile'; P.eye = 'H';
+    }
+    // chair + crash
+    const crash = 9.0;
+    let chairRot = 0, legB = '';
+    if (t >= crash) {
+      const k = seg(t, crash, crash + .45, easeIn);
+      chairRot = -k * 34 + (t > crash + .45 ? Math.sin((t - crash - .45) * 18) * 3 * Math.max(0, 1 - (t - crash - .45) * 2) : 0);
+      const lk = seg(t, crash, crash + .6, easeOut);
+      legB = `translate(${-lk * 260} ${lk * 60 - Math.sin(lk * Math.PI) * 140}) rotate(${-lk * 300} -69 60)`;
+      const fk = seg(t, crash, crash + .42, easeIn);
+      P = blend({ ...SIT, x: 1000, y: 780 }, { torso: 0, head: 10, aL: [70, 30], aR: [55, 20], lL: [150, 40], lR: [130, 60], x: 930, y: FLOOR - 40, rot: -90 }, fk);
+      P.rot = lerp(0, -90, fk); P.eye = t > crash + .5 ? 'X' : 'O'; P.mouth = 'O';
+      if (t > crash + .42) { const b = Math.max(0, 1 - (t - crash - .42) * 3); P.y -= Math.abs(Math.sin((t - crash) * 20)) * 24 * b; }
+      fx += dust(980, FLOOR, t, crash + .4) + burst('CRASH!', 1240, 520, t, crash + .38, 1.2);
+    }
+    $('ch').setAttribute('transform', `rotate(${chairRot} 80 112)`);
+    $('ch-legB').setAttribute('transform', legB);
+    pose('F', P);
+    $('fx').innerHTML = fx;
+    // freeze + menu
+    const fz = 10.6;
+    const [sx, sy] = shake(t, crash + .4);
+    $('world').setAttribute('transform', `translate(${sx} ${sy})`);
+    $('sv').style.filter = t > fz ? `grayscale(${seg(t, fz, fz + .3)}) blur(${seg(t, fz + .4, fz + .9) * 6}px) brightness(${1 - seg(t, fz + .4, fz + .9) * .45})` : 'none';
+    ov += caption('Meet Frank.', t, .4, 3.0) + caption('Frank does not spend money.', t, 3.1, 5.6);
+    if (t > fz + .5) ov += menu(t - (fz + .5), 'A');
+    $('ov').innerHTML = ov;
+  },
+};
+
+function menu(t, pick) {
+  const k = seg(t, 0, .35, easeOut);
+  const idx = { A: 0, B: 1, C: 2 }[pick];
+  const hot = t > 1.05;
+  const opts = [['A', 'Buy a new chair'], ['B', 'Watch a tutorial'], ['C', 'Film it with FixFrame']];
+  const cards = opts.map(([kk, l], i) => `<div class="opt ${hot && i === idx ? 'hot' : ''} ${hot && i !== idx && t > 1.4 ? 'dim' : ''}" style="opacity:${seg(t, .1 + i * .12, .4 + i * .12)};transform:translateY(${(1 - seg(t, .1 + i * .12, .4 + i * .12, easeOut)) * 40}px) scale(${hot && i === idx ? 1 + seg(t, 1.05, 1.25) * .06 : 1})"><span class="k">Option ${kk}</span><span class="l">${l}</span></div>`).join('');
+  const cx = key(t, [[.3, 1700], [1.0, 470 + idx * 500 + 60]]);
+  const cy = key(t, [[.3, 980], [1.0, 640]]);
+  const ring = t > 1.0 && t < 1.5 ? `<div class="ring" style="left:${cx - 20}px;top:${cy - 20}px;transform:scale(${1 + (t - 1) * 3});opacity:${1 - (t - 1) * 2}"></div>` : '';
+  return `<div class="menu" style="opacity:${k}"><h2>Frank has three options.</h2><div class="opts">${cards}</div></div>
+    <svg class="cursor" style="left:${cx}px;top:${cy}px" viewBox="0 0 24 24"><path d="M3 2 L 3 19 L 8 14 L 11.5 21 L 14 20 L 10.6 13 L 17 13 Z" fill="#fff" stroke="#111" stroke-width="1.4"/></svg>${ring}`;
+}
+S.menuB = { dur: 2.4, build() { S.intro.build(); }, update(t) { S.intro.update(11.1 + Math.min(t, .01)); $('ov').innerHTML = menu(t, 'B'); $('sv').style.filter = 'grayscale(1) blur(6px) brightness(.55)'; } };
+S.menuC = { dur: 2.4, build() { S.intro.build(); }, update(t) { S.intro.update(11.1 + Math.min(t, .01)); $('ov').innerHTML = menu(t, 'C'); $('sv').style.filter = 'grayscale(1) blur(6px) brightness(.55)'; } };
+
+// ---- small chair pictures for screens ----
+function chairPic(w, h, hue) {
+  return `<svg viewBox="0 0 200 200" width="${w}" height="${h}" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)"><g fill="${hue}"><rect x="50" y="20" width="14" height="110" rx="5"/><rect x="136" y="20" width="14" height="110" rx="5"/><rect x="50" y="30" width="100" height="18" rx="6"/><rect x="50" y="64" width="100" height="12" rx="5"/><rect x="40" y="110" width="120" height="18" rx="6"/><rect x="50" y="126" width="12" height="62" rx="4"/><rect x="138" y="126" width="12" height="62" rx="4"/></g></svg>`;
+}
+
+function laptop(lid) {
+  // side view: base on the floor, lid hinged at the far (right) end, screen facing Frank
+  const a = lerp(-105, -178, lid);
+  return `<g transform="translate(880 ${FLOOR - 4})"><rect x="0" y="-12" width="200" height="12" rx="4" fill="#3a3a3a"/>
+    <g transform="translate(196 -10) rotate(${a})"><rect x="0" y="-6" width="190" height="12" rx="4" fill="#4a4a4a"/></g>
+    <ellipse cx="${196 + Math.cos(a * Math.PI / 180) * 120}" cy="${-10 + Math.sin(a * Math.PI / 180) * 120}" rx="70" ry="40" fill="#f4f1ea" opacity="${(1 - lid) * .18}"/></g>`;
+}
+
+// ---- 2. Option A: buy new ----
+S.optA = {
+  dur: 13.2,
+  build() {
+    stage.innerHTML = `<div id="scr"></div><svg viewBox="0 0 1920 1080" id="sv" style="display:none"><g id="world">${room()}<g id="lap"></g>${frankSVG('F')}<g id="fx"></g></g></svg><div id="ov"></div><div class="grain"></div>`;
+  },
+  update(t) {
+    const rw = 11.4;
+    const tt = t > rw ? rw - (t - rw) * 3.2 : t;
+    let ov = '';
+    if (tt < 5.4) {
+      $('scr').style.display = ''; $('sv').style.display = 'none';
+      const p = (i, v, at) => { const k = seg(tt, at, at + .5, easeOut); return `$${Math.round(v * k).toLocaleString()}`; };
+      const sc = (at) => 1 + Math.max(0, 1 - Math.abs(tt - at - .35) * 4) * .25;
+      const y = -seg(tt, 3.6, 4.4) * 120;
+      $('scr').innerHTML = `<div class="browser"><div class="bar"><span class="dots"><i></i><i></i><i></i></span><div class="url">seatly.example/chairs/wooden</div></div>
+        <div style="transform:translateY(${y}px)"><div class="shop-head"><b>Wooden chairs</b><span style="font-size:26px;color:#777">Sort: Featured</span></div>
+        <div class="cards">
+          ${[['Basic wooden chair', 289, .6, '#8f5a30'], ['Comfort Classic', 549, 1.6, '#6b3f20'], ['Artisan oak chair', 1200, 2.6, '#b07a42']].map(([n, v, at, c]) => `<div class="card"><div class="ph">${chairPic(260, 260, c)}</div><h4>${n}</h4><span class="price" style="transform:scale(${sc(at)})">${p(0, v, at)}</span></div>`).join('')}
+        </div>
+        <span class="ship" style="opacity:${seg(tt, 3.9, 4.3)}">🚚 Delivery: 6–8 weeks</span></div></div>`;
+      ov += caption('Option A: buy a new one.', t, .2, 3.4);
+    } else {
+      $('scr').style.display = 'none'; $('sv').style.display = '';
+      const dk = (tt % 1.6) / 1.6; $('drip').setAttribute('cy', 30 + dk * 760);
+      // close-up of face (5.4-8.4) then wide faint (8.4-11.4)
+      if (tt < 8.4) {
+        const tw = Math.sin(tt * 40) > .3 && tt > 6.2;
+        pose('F', { ...SIT, x: 760, y: FLOOR - 40, torso: 0, lL: [80, 80], lR: [86, 84], aL: [70, 40], aR: [74, 36], eye: 'O', mouth: tt > 6.8 ? 'Wob' : 'O', sweat: tt > 6.5, brow: tw ? 10 : 0, head: Math.sin(tt * 30) * (tt > 7 ? 2 : 0) });
+        const z = 2.4 + seg(tt, 5.4, 8.4, (x) => x) * .3;
+        $('world').setAttribute('transform', `translate(${960 - 790 * z} ${560 - 640 * z}) scale(${z})`);
+        $('lap').innerHTML = laptop(0);
+        ov += caption('$289. For a chair.', t, 5.8, 8.2);
+      } else {
+        $('world').setAttribute('transform', '');
+        const fk = seg(tt, 9.4, 10.0, easeIn);
+        const base = { ...SIT, x: 760, y: FLOOR - 40, torso: 0, lL: [80, 80], lR: [86, 84], aL: [70, 40], aR: [74, 36], eye: 'O', mouth: 'Flat' };
+        const P = blend(base, { ...base, rot: -92, x: 700, y: FLOOR - 40, aL: [70, 30], aR: [55, 20], eye: 'X', mouth: 'O' }, fk);
+        P.rot = lerp(0, -92, fk);
+        pose('F', P);
+        const lid = seg(tt, 8.6, 9.2);
+        $('lap').innerHTML = laptop(lid);
+        $('fx').innerHTML = dust(720, FLOOR, tt, 10.0);
+        const [sx, sy] = shake(tt, 10.0, 10);
+        if (t <= rw) $('world').setAttribute('transform', `translate(${sx} ${sy})`);
+        if (t <= rw) ov += stamp('NOPE.', t, 10.3, 1180, 300);
+      }
+    }
+    ov += vhs(t, rw, 13.2);
+    $('ov').innerHTML = ov;
+    stage.style.filter = t > rw ? `saturate(.6) contrast(1.1) hue-rotate(${Math.sin(t * 20) * 8}deg)` : 'none';
+  },
+};
+
+// ---- 3. Option B: the tutorial ----
+function presenter(t) {
+  const th = Math.sin(t * 6) * 6;
+  return `<svg viewBox="0 0 1620 760" width="1620" height="760" style="position:absolute;inset:0">
+    <rect width="1620" height="760" fill="#2f3b44"/><rect y="560" width="1620" height="200" fill="#5a4636"/>
+    <g transform="translate(560 560)"><rect x="-70" y="-260" width="140" height="260" rx="40" fill="#3e7bb5"/><circle cx="0" cy="-320" r="62" fill="#e8b48e"/><path d="M-62 -330 Q 0 -400 62 -330" fill="#4a3324"/><path d="M-20 -300 Q 0 -286 20 -300" stroke="#222" stroke-width="5" fill="none"/>
+      <g transform="translate(70 -230) rotate(${-120 + th})"><rect x="-14" y="0" width="28" height="120" rx="14" fill="#3e7bb5"/><circle cy="132" r="22" fill="#e8b48e"/><rect x="-6" y="140" width="12" height="30" rx="6" fill="#e8b48e"/></g></g>
+    <g transform="translate(1040 560)">${'<rect x="-80" y="-10" width="160" height="18" rx="6" fill="#a26a3c"/><rect x="-70" y="8" width="14" height="110" fill="#7a4a26"/><rect x="56" y="8" width="14" height="110" fill="#7a4a26"/><rect x="-80" y="-220" width="16" height="220" fill="#7a4a26"/>'}</g>
+    <text x="70" y="90" font-family="Inter" font-weight="700" font-size="54" fill="#ffd34a">STEP 1 OF 38</text></svg>`;
+}
+function cloud(t) {
+  let s = '';
+  for (let i = 0; i < 14; i++) {
+    const a = (i / 14) * Math.PI * 2 + t * 3;
+    const r = 150 + Math.sin(t * 9 + i) * 26;
+    s += `<circle cx="${960 + Math.cos(a) * r}" cy="${640 + Math.sin(a) * r * .6}" r="${120 + Math.sin(t * 11 + i * 2) * 20}" fill="#d9d2c2" stroke="#7d7465" stroke-width="5"/>`;
+  }
+  const tools = ['🔨', '🪛', '🩹', '🧴', '🪚', '🔩', '🧦'];
+  for (let i = 0; i < 6; i++) {
+    const ph = ((t * 1.6 + i / 6) % 1);
+    const a = rnd(i * 7 + Math.floor(t * 1.6 + i / 6)) * Math.PI * 2;
+    s += `<text x="${960 + Math.cos(a) * (100 + ph * 520)}" y="${640 + Math.sin(a) * (60 + ph * 320)}" font-size="${84}" text-anchor="middle" transform="rotate(${ph * 720} ${960 + Math.cos(a) * (100 + ph * 520)} ${640 + Math.sin(a) * (60 + ph * 320)})" opacity="${1 - ph * .6}">${tools[(i + Math.floor(t * 1.6)) % tools.length]}</text>`;
+  }
+  return s;
+}
+function wrongChair() {
+  return `<g transform="translate(1110 790)">
+    <g transform="rotate(14)">
+      <rect x="-90" y="-6" width="182" height="22" rx="8" fill="#a26a3c"/>
+      <rect x="62" y="10" width="18" height="102" rx="6" fill="#7a4a26" transform="rotate(-38 70 10)"/>
+      <rect x="-78" y="10" width="18" height="70" rx="6" fill="#6b3f20"/>
+      <rect x="-82" y="-410" width="18" height="400" rx="7" fill="#7a4a26"/>
+      <rect x="-140" y="-200" width="26" height="150" rx="8" fill="#8f5a30" transform="rotate(70 -127 -125)"/>
+      <rect x="40" y="-370" width="18" height="380" rx="7" fill="#6b3f20" transform="rotate(8 49 0)"/>
+      <path d="M-100 -30 L 100 40 M -100 40 L 100 -30" stroke="#d9cfa9" stroke-width="20" opacity=".9"/>
+      <path d="M-74 -380 L -40 -330 M -40 -380 L -74 -330" stroke="#d9cfa9" stroke-width="16" opacity=".9"/>
+    </g></g>`;
+}
+S.optB = {
+  dur: 21,
+  build() {
+    stage.innerHTML = `<div id="scr"></div><svg viewBox="0 0 1920 1080" id="sv" style="display:none"><g id="world">${room()}<g id="mont"></g><g id="wc"></g>${frankSVG('F')}<g id="fx"></g></g></svg><div id="ov"></div><div class="grain"></div>`;
+  },
+  update(t) {
+    const rw = 19.2;
+    const tt = t > rw ? rw - (t - rw) * 4 : t;
+    let ov = '';
+    if (tt < 3.8) {
+      $('scr').style.display = ''; $('sv').style.display = 'none';
+      $('scr').innerHTML = `<div class="browser"><div class="bar"><span class="dots"><i></i><i></i><i></i></span><div class="url">tutorials.example/watch?v=fix-wobbly-chair</div></div>
+        <div class="player">${presenter(tt)}<div class="pbar"><i style="width:${1 + tt * .3}%"></i></div><div class="ptime">0:${String(Math.floor(tt * 3)).padStart(2, '0')} / 47:12</div></div>
+        <div class="ptitle">HOW TO FIX A WOBBLY CHAIR (SUPER EASY!!)</div><div class="pmeta">Part 1 of 6 · tools you'll need: 23</div></div>`;
+      ov += caption('Option B: watch a tutorial.', t, .2, 3.6);
+    } else {
+      $('scr').style.display = 'none'; $('sv').style.display = '';
+      const dk = (tt % 1.6) / 1.6; $('drip').setAttribute('cy', 30 + dk * 760);
+      let fx = '';
+      if (tt < 10.6) {
+        // montage fight cloud with Frank popping out
+        $('mont').innerHTML = cloud(tt);
+        $('wc').innerHTML = '';
+        const pop = Math.sin(tt * 4) > .6;
+        pose('F', { ...STAND, x: pop ? 860 : 3000, y: 560, sc: .9, aL: [150, 40], aR: [160, 30], eye: 'O', mouth: 'O', sweat: true });
+        ov += `<div style="position:absolute;right:70px;top:60px;font:700 80px Inter;color:#fff;background:#c43a2a;padding:10px 30px;border-radius:16px">▶▶ ×16</div>`;
+        ov += `<div style="position:absolute;left:70px;top:60px;font:700 46px Inter;color:#1e2a23;background:rgba(246,242,230,.95);padding:10px 26px;border-radius:12px">${Math.floor(lerp(0, 5, seg(tt, 3.8, 10.6, (x) => x)))}h ${String(Math.floor((tt * 137) % 60)).padStart(2, '0')}m later…</div>`;
+      } else {
+        $('mont').innerHTML = '';
+        $('wc').innerHTML = wrongChair();
+        if (tt < 15.2) {
+          const proud = { ...STAND, x: 470, y: FLOOR - 197, aR: [150 + Math.sin(tt * 5) * 6, 20], aL: [20, 30], mouth: 'Grin', band: true, held: tt > 12 ? `<g transform="translate(0 92)"><rect x="-26" y="-6" width="8" height="34" rx="2" fill="#9aa1a6" transform="rotate(-20)"/><rect x="-4" y="-8" width="8" height="34" rx="2" fill="#9aa1a6"/><rect x="18" y="-6" width="8" height="34" rx="2" fill="#9aa1a6" transform="rotate(20)"/></g>` : '' };
+          pose('F', proud);
+          ov += caption('Done! Only took five hours.', t, 10.9, 12.4) + caption('…bonus screws.', t, 12.6, 15.0);
+        } else {
+          const k = seg(tt, 15.2, 16.3);
+          const sit = blend({ ...STAND, x: 470, y: FLOOR - 197, band: true }, { ...SIT, x: 1050, y: 790, band: true }, k);
+          sit.mouth = 'Flat'; sit.eye = 'N'; sit.band = true;
+          let P = sit;
+          const crash = 16.8;
+          if (tt > crash) {
+            const fk = seg(tt, crash, crash + .4, easeIn);
+            P = blend({ ...SIT, x: 1050, y: 790 }, { torso: 0, head: 10, aL: [70, 30], aR: [55, 20], lL: [150, 40], lR: [130, 60], x: 980, y: FLOOR - 40 }, fk);
+            P.rot = lerp(0, -90, fk); P.eye = 'X'; P.mouth = 'O'; P.band = true;
+            $('wc').innerHTML = `<g transform="translate(0 ${fk * 60})">${wrongChair()}</g>` ;
+            fx += dust(1080, FLOOR, tt, crash + .35) + burst('CRUNCH!', 1420, 480, tt, crash + .32, .85);
+          }
+          pose('F', P);
+          const [sx, sy] = shake(tt, crash + .35, 12);
+          $('world').setAttribute('transform', `translate(${sx} ${sy})`);
+          if (t <= rw) ov += stamp('ALSO NOPE.', t, 18.0, 1000, 280, 7);
+        }
+      }
+      $('fx').innerHTML = fx;
+    }
+    ov += vhs(t, rw, 21);
+    $('ov').innerHTML = ov;
+    stage.style.filter = t > rw ? `saturate(.6) contrast(1.1) hue-rotate(${Math.sin(t * 20) * 8}deg)` : 'none';
+  },
+};
+
+// ---- 4. Option C: film it ----
+S.optC = {
+  dur: 6.2,
+  build() {
+    stage.innerHTML = `<svg viewBox="0 0 1920 1080" id="sv"><g id="world">${room()}<g id="chairW" transform="translate(1180 790)">${chairSVG('ch')}</g>${frankSVG('F')}<g id="phone"></g></g></svg><div id="ov"></div><div class="grain"></div>`;
+  },
+  update(t) {
+    const dk = (t % 1.6) / 1.6; $('drip').setAttribute('cy', 30 + dk * 760);
+    $('ch').setAttribute('transform', `rotate(${Math.sin(t * 6) * 2.4 * (t > 1.2 ? 1 : 0)} 80 112)`);
+    pose('F', { ...STAND, x: 820, y: FLOOR - 197, aR: [86, 30], aL: [60, 20], head: -6, mouth: 'Smile', band: true });
+    const ph = `<g transform="translate(980 485) rotate(-6)"><rect x="-48" y="-82" width="96" height="164" rx="14" fill="#1b1b1b"/><rect x="-42" y="-74" width="84" height="148" rx="8" fill="#cfc6b5"/><g transform="translate(0 4) scale(.33)">${'<rect x="-60" y="-120" width="12" height="160" fill="#7a4a26"/><rect x="-70" y="30" width="140" height="16" fill="#a26a3c"/><rect x="-60" y="44" width="12" height="80" fill="#6b3f20"/><rect x="48" y="44" width="12" height="80" fill="#7a4a26"/>'}</g><circle cx="-26" cy="-58" r="6" fill="${t % 1 < .5 ? '#e33' : '#7a2222'}"/><text x="-16" y="-52" font-family="Inter" font-weight="700" font-size="16" fill="#e33">REC</text></g>`;
+    $('phone').innerHTML = ph;
+    $('ov').innerHTML = caption('Option C: just film it.', t, .3, 5.6);
+    const zk = seg(t, 4.6, 6.2, easeIn);
+    $('world').setAttribute('transform', `translate(${-980 * zk * 3} ${-485 * zk * 3}) scale(${1 + zk * 3})`);
+    $('ov').style.opacity = 1 - seg(t, 5.4, 5.9);
+    stage.style.background = '#000';
+    $('sv').style.opacity = 1 - seg(t, 5.7, 6.2);
+  },
+};
+
+// ---- 5. Ending ----
+S.ending = {
+  dur: 13,
+  build() {
+    stage.innerHTML = `<svg viewBox="0 0 1920 1080" id="sv"><g id="world">${room()}<g id="chairW" transform="translate(1060 790)">${chairSVG('ch')}</g>${frankSVG('F')}<g id="coin"></g><g id="spark"></g></g></svg><div id="ov"></div><div id="endc"></div><div class="grain"></div>`;
+    // move jar near the chair
+  },
+  update(t) {
+    const dk = (t % 1.6) / 1.6; $('drip').setAttribute('cy', 30 + dk * 760);
+    let P;
+    if (t < 1.4) { const w = walk(t); P = { ...STAND, ...w, x: lerp(700, 1010, seg(t, 0, 1.4, (x) => x)), y: FLOOR - 197 - w.bob, band: true }; }
+    else if (t < 2.6) { P = blend({ ...STAND, x: 1010, y: FLOOR - 197 }, { ...SIT, x: 1000, y: 780 }, seg(t, 1.4, 2.6, (k) => easeIn(k) * .7 + k * .3)); P.eye = 'O'; P.mouth = 'Flat'; P.band = true; }
+    else if (t < 4.6) { P = { ...SIT, x: 1000, y: 780, eye: t > 3.6 ? 'H' : 'O', mouth: t > 3.6 ? 'Smile' : 'Flat', band: true, sweat: t < 3.6 }; }
+    else { P = { ...SIT, x: 1000, y: 780, torso: -14, head: 8, aL: [150, 120], aR: [150, 130], lL: [100, 70], lR: [70, 40], eye: 'H', mouth: 'Grin', band: true }; }
+    pose('F', P);
+    // sparkle on chair + coin toss to jar
+    $('spark').innerHTML = t > 4.6 && t < 6 ? [0, 1, 2].map((i) => `<text x="${940 + i * 120}" y="${700 - i * 30}" font-size="${60 * seg(t, 4.6 + i * .15, 4.9 + i * .15, easeOut)}" fill="#f3d58b">✦</text>`).join('') : '';
+    if (t > 6 && t < 7.2) {
+      const k = seg(t, 6, 7.0, (x) => x);
+      $('coin').innerHTML = `<ellipse cx="${lerp(1040, 740, k)}" cy="${lerp(560, 650, k) - Math.sin(k * Math.PI) * 260}" rx="14" ry="${5 + Math.abs(Math.sin(k * 20)) * 9}" fill="#d9b245" stroke="#a8862b" stroke-width="2"/>`;
+    } else $('coin').innerHTML = '';
+    let ov = caption('Holds. Totally solid.', t, 3.7, 5.9) + caption('$9. Frank approves.', t, 6.1, 9.4);
+    $('ov').innerHTML = ov;
+    // end card
+    const e = seg(t, 9.6, 10.3);
+    $('endc').innerHTML = e > 0 ? `<div class="end" style="opacity:${e}"><div class="logo"><i><svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#dfe5d6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg></i>fixframe</div>
+      <h1 style="opacity:${seg(t, 10.2, 10.8)}">Don't replace it.<br><em>Film it.</em></h1>
+      <div class="stack" style="opacity:${seg(t, 11, 11.6)}">PayPal · Channel3 · AG Grid · Render</div></div>` : '';
+  },
+};
+
+// ===================== driver =====================
+const name = new URLSearchParams(location.search).get('scene') || 'intro';
+window.SCENE = S[name];
+window.SCENE.build();
+window.render = (t) => window.SCENE.update(t);
+window.render(Number(new URLSearchParams(location.search).get('t') || 0));
+</script>
+</body>
+</html>
