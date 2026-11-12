@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fix it · FixFrame</title>
+  <script>
+    function tbFallback(el) { const list = (el.dataset.fallbacks || '').split(' ').filter(Boolean); if (!list.length) return; el.dataset.fallbacks = list.slice(1).join(' '); el.href = list[0]; }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/vendor/ag-grid/styles/ag-grid.css" data-fallbacks="../node_modules/ag-grid-community/styles/ag-grid.css https://cdn.jsdelivr.net/npm/ag-grid-community@32.3.3/styles/ag-grid.css" onerror="tbFallback(this)" />
+  <link rel="stylesheet" href="/vendor/ag-grid/styles/ag-theme-quartz.css" data-fallbacks="../node_modules/ag-grid-community/styles/ag-theme-quartz.css https://cdn.jsdelivr.net/npm/ag-grid-community@32.3.3/styles/ag-theme-quartz.css" onerror="tbFallback(this)" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="site.css" />
+  <link rel="stylesheet" href="app.css" />
+</head>
+<body>
+  <div class="backdrop" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="progress" aria-hidden="true"></div>
+
+  <header class="top">
+    <a class="brand" href="index.html"><span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg></span>fixframe</a>
+    <div class="top-right">
+      <div class="badges" id="badges"></div>
+      <nav class="nav"><a href="index.html">Home</a><a href="fix.html">Fix something</a></nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <!-- ============ 1. upload ============ -->
+    <section id="uploadView" class="upload-wrap">
+      <label class="drop glass reveal" id="drop">
+        <input type="file" id="file" accept="video/*,image/*" capture="environment" aria-label="Upload a video or photo of the broken thing" />
+        <div>
+          <div class="cam"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+          <h2>Film what's broken</h2>
+          <p>Drop a 10–30 second video or a photo. Show the problem up close.</p>
+          <p style="font-size:13px;margin-top:10px;color:var(--ink-3)">MP4, MOV or JPG · up to 80 MB</p>
+        </div>
+      </label>
+      <div class="side-card glass reveal" style="--d:100ms">
+        <h3>Anything we should know?</h3>
+        <textarea class="note" id="note" rows="3" placeholder="e.g. Bathroom faucet drips even when it's off. Started last week."></textarea>
+        <h3 style="margin-top:6px">Or try the demo</h3>
+        <button class="demo-card" id="demoBtn" type="button">
+          <img src="media/demo-poster.jpg" alt="" />
+          <span><b>Leaky bathroom faucet</b><small>12-second clip · pre-checked diagnosis</small></span>
+        </button>
+        <div class="modes" id="modes"></div>
+      </div>
+    </section>
+
+    <!-- ============ 2. analyzing ============ -->
+    <section id="analyzeView" class="analyzing hidden">
+      <div class="scan glass" id="scanMedia"><div class="grid-ov"></div></div>
+      <div class="side-card glass">
+        <span class="tag busy" style="align-self:flex-start">Analyzing</span>
+        <h3 style="font-size:24px;letter-spacing:-.03em">Looking at your video…</h3>
+        <ol class="steps" id="aSteps"></ol>
+      </div>
+    </section>
+
+    <!-- ============ 3. results ============ -->
+    <section id="resultView" class="hidden">
+      <div class="fx-stage">
+        <div class="player-card glass reveal">
+          <div class="fx-player" id="player">
+            <video id="video" playsinline muted preload="auto"></video>
+            <div class="ov" id="ov"></div>
+          </div>
+          <div class="timeline" id="timeline"><div class="track"></div><div class="fill" id="tlFill"></div><div class="head" id="tlHead"></div></div>
+          <div class="controls-row">
+            <div style="display:flex;gap:8px;align-items:center"><button class="icon-btn" id="playBtn" aria-label="Play">▶</button><span class="muted" id="tlTime" style="margin:0">0:00</span></div>
+            <button class="ghost" id="newBtn">Film something else</button>
+          </div>
+          <div class="chips" id="markerChips"></div>
+        </div>
+
+        <div class="dx glass reveal" style="--d:100ms">
+          <div class="item" id="dxItem"></div>
+          <h2 id="dxProblem"></h2>
+          <div class="dx-row" id="dxPills"></div>
+          <p id="dxSummary"></p>
+          <div class="conf"><div><small>AI confidence</small><div class="dmx lg" id="dxConf"><span class="u">%</span></div></div><div class="ruler" id="confRuler" data-ticks="31" style="flex:1;max-width:220px"></div></div>
+          <div><small class="muted" style="margin:0">Tools you'll need</small><div class="tools" id="dxTools" style="margin-top:6px"></div></div>
+          <div id="dxSafety"></div>
+          <div id="dxNotice"></div>
+        </div>
+      </div>
+
+      <div class="section-gap">
+        <!-- verdict -->
+        <div class="verdict" id="verdict">
+          <div class="tile omb o-sage breathe reveal"><div class="t-label">Repair it</div><div class="snum" id="vRepair"></div><div class="t-foot"><span id="vRepairFoot">Parts</span></div></div>
+          <div class="vs-mid reveal">VS</div>
+          <div class="tile glass reveal"><div class="t-label">Replace it</div><div class="snum" id="vReplace" style="color:var(--ink-3);text-decoration:line-through;text-decoration-color:var(--clay);text-decoration-thickness:3px"></div><div class="t-foot"><span id="vReplaceFoot"></span></div></div>
+          <div class="tile omb o-blue breathe big reveal" style="--d:120ms"><div class="t-label">You save</div><div class="snum clay" id="vSave" style="font-size:84px"></div><div class="t-foot"><span id="vImpact"></span></div></div>
+        </div>
+
+        <!-- steps -->
+        <div class="panel glass reveal">
+          <div class="panel-head"><div><h2>Step-by-step, pinned to your video</h2><p class="muted">Click a step to jump to the moment in your clip that shows it.</p></div><span class="pillx" id="stepsMeta"></span></div>
+          <div class="steps-grid" id="stepsList"></div>
+        </div>
+
+        <!-- parts + checkout -->
+        <div class="buy-grid">
+          <div class="panel glass reveal">
+            <div class="panel-head">
+              <div><h2>Parts, matched to your fault</h2><p class="muted">Real offers from across stores. Pick one per part, or search by the photo from your video.</p></div>
+              <span class="src" id="partsSrc"></span>
+            </div>
+            <div class="parts-head-row" id="partChips"></div>
+            <div id="grid" class="ag-theme-quartz grid"></div>
+          </div>
+          <div class="panel glass checkout reveal" style="--d:120ms">
+            <div class="checkout-inner">
+              <div><h2>Fix it yourself</h2><p class="muted" style="margin-bottom:14px">Order the parts with PayPal. They arrive with the steps above.</p><div class="cart-sum" id="cartSum"></div></div>
+              <div><div class="pp-wrap" id="ppParts"></div><button class="btn pay hidden" id="demoPayParts">Pay with PayPal (demo)</button><div id="partsPaid"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- pros: pay only if fixed -->
+        <div class="panel glass reveal" id="proPanel">
+          <div class="panel-head">
+            <div><h2>Rather not DIY? Pay only if it's fixed.</h2><p class="muted">Book a pro. PayPal holds the money instead of charging it. After the repair, film it again: if FixFrame sees it's fixed, the payment is released. If not, you're not charged.</p></div>
+          </div>
+          <div class="pros" id="pros"></div>
+          <div class="flow" id="flow">
+            <div class="fs" data-k="book"><b>1 · Book</b>Pick a pro</div>
+            <div class="fs" data-k="hold"><b>2 · Hold</b>PayPal authorizes</div>
+            <div class="fs" data-k="repair"><b>3 · Repair</b>Pro does the job</div>
+            <div class="fs" data-k="verify"><b>4 · Verify</b>AI checks the after-clip</div>
+            <div class="fs" data-k="pay"><b>5 · Pay</b>Captured, or released</div>
+          </div>
+          <div id="proAction"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>Sandbox demo. Payments run in PayPal's sandbox. Pros are simulated; parts come from Channel3 when a key is set.</footer>
+
+  <script src="/vendor/ag-grid/dist/ag-grid-community.min.js"></script>
+  <script>if (!window.agGrid) document.write('<script src="../node_modules/ag-grid-community/dist/ag-grid-community.min.js"><\/script>');</script>
+  <script>if (!window.agGrid) document.write('<script src="https://cdn.jsdelivr.net/npm/ag-grid-community@32.3.3/dist/ag-grid-community.min.js"><\/script>');</script>
+  <script src="ui.js"></script>
+  <script src="site.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

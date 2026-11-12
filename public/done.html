@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fixed · FixFrame</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="site.css" />
+  <link rel="stylesheet" href="app.css" />
+</head>
+<body>
+  <div class="backdrop" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="top">
+    <a class="brand" href="index.html"><span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg></span>fixframe</a>
+    <nav class="nav"><a href="index.html">Home</a><a href="fix.html">Fix something</a></nav>
+  </header>
+
+  <main class="booked" id="done">
+    <section class="booked-hero">
+      <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+      <h1 class="reveal" style="--d:200ms" id="dTitle">You fixed it instead of replacing it</h1>
+      <div class="snum xl clay reveal" style="--d:300ms" id="dSaved"><span class="u">saved</span></div>
+      <p class="reveal" style="--d:380ms" id="dSub"></p>
+    </section>
+
+    <div class="b-grid">
+      <div class="tile omb o-sage breathe reveal" style="--d:450ms"><div class="t-label" id="dRepairLabel">Repair cost</div><div class="snum" id="dRepair"></div><div class="t-foot"><span>Paid with PayPal</span></div></div>
+      <div class="tile glass reveal" style="--d:520ms"><div class="t-label">Kept out of landfill</div><div class="snum" id="dWaste"><span class="u">kg</span></div><div class="t-foot"><span id="dItem"></span></div></div>
+      <div class="tile omb o-blue breathe reveal" style="--d:590ms"><div class="t-label" id="dThirdLabel">Water saved a year</div><div class="snum" id="dThird"></div><div class="t-foot"><span id="dThirdFoot">gallons</span></div></div>
+    </div>
+
+    <div class="panel glass reveal" style="--d:640ms">
+      <h2>Receipt</h2>
+      <ul class="b-list" id="dList"></ul>
+      <div class="b-meta" id="dMeta"></div>
+    </div>
+
+    <div class="b-actions reveal" style="--d:700ms">
+      <a class="btn light" href="fix.html">Fix something else <span class="plus">+</span></a>
+      <a class="btn" href="index.html">Back to home <span class="plus">→</span></a>
+    </div>
+  </main>
+
+  <footer>Sandbox demo. Payments run in PayPal's sandbox.</footer>
+  <script src="ui.js"></script>
+  <script src="site.js"></script>
+  <script>
+    (function () {
+      const UI = window.TimeBackUI;
+      const $ = (id) => document.getElementById(id);
+      const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      const money = (n) => `$${Number(n).toFixed(2)}`;
+      let d = null;
+      try { d = JSON.parse(decodeURIComponent(location.hash.slice(1))); } catch (e) { /* no hash */ }
+      if (!d) { try { d = JSON.parse(sessionStorage.getItem('fixframe:done')); } catch (e) { /* storage blocked */ } }
+      if (!d) {
+        $('done').innerHTML = '<section class="booked-hero" style="padding:90px 0"><h1>Nothing fixed yet.</h1><p>Film something broken to get started.</p><div class="b-actions"><a class="btn light" href="fix.html">Fix something <span class="plus">+</span></a></div></section>';
+        return;
+      }
+      UI.setPalette('done');
+      $('dTitle').textContent = d.mode === 'pro' ? 'Fixed by a pro, verified by FixFrame' : 'You fixed it instead of replacing it';
+      $('dSub').textContent = `${d.item}: ${d.problem}. Replacing it would have cost ${money(d.replace)}.`;
+      $('dRepairLabel').textContent = d.mode === 'pro' ? 'Pro repair (released after verification)' : 'Parts cost';
+      $('dItem').textContent = d.replaceItem;
+      setTimeout(() => {
+        UI.countText($('dSaved'), d.saved, (v) => `$${v.toFixed(0)}`, 1500);
+        UI.countText($('dRepair'), d.repair, (v) => `$${v.toFixed(0)}`, 1100);
+        UI.countText($('dWaste'), d.waste, (v) => v.toFixed(1), 1100);
+        if (d.water) UI.countText($('dThird'), d.water, (v) => Math.round(v).toLocaleString(), 1300);
+        else { $('dThirdLabel').textContent = 'Time to fix'; $('dThirdFoot').textContent = 'minutes'; UI.countText($('dThird'), d.minutes, (v) => v.toFixed(0), 1000); }
+      }, 350);
+      const rows = d.mode === 'pro'
+        ? [`<li style="--d:700ms"><span class="thumb"><span class="ph" style="width:54px;height:54px;border-radius:14px;display:grid;place-items:center;background:var(--lime);color:#17151c;font-weight:800">✓</span></span><span class="when">Verified</span><span>${esc(d.pro.name)}<small>Payment held by PayPal, captured after the AI confirmed the fix</small></span><b>${money(d.pro.amount)}</b></li>`]
+        : d.parts.map((p, i) => `<li style="--d:${700 + i * 80}ms"><span class="thumb"><span class="ph" style="width:54px;height:54px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.1)">${i + 1}</span></span><span class="when">Part</span><span>${esc(p.name)}<small>${esc(p.store)}</small></span><b>${money(p.price)}</b></li>`);
+      $('dList').innerHTML = rows.join('');
+      $('dMeta').textContent = d.mode === 'pro'
+        ? `PayPal capture ${d.pro.capture || ''}${d.demo ? ' (demo)' : ''}`
+        : `PayPal order ${d.order || ''}${d.demo ? ' (demo)' : ''}`;
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+[
+  { "id": "pro-1", "name": "Rivera Plumbing", "skills": ["plumbing"], "rating": 4.9, "jobs": 412, "eta": "Today, 4–6pm", "priceFactor": 0.55, "verified": true },
+  { "id": "pro-2", "name": "Northside Handy Co.", "skills": ["general", "furniture", "appliance"], "rating": 4.7, "jobs": 238, "eta": "Tomorrow, 9–11am", "priceFactor": 0.3, "verified": true },
+  { "id": "pro-3", "name": "FlowRight Plumbers", "skills": ["plumbing", "appliance"], "rating": 4.8, "jobs": 901, "eta": "Today, 7–9pm", "priceFactor": 0.85, "verified": true },
+  { "id": "pro-4", "name": "Campus Fix-It Crew", "skills": ["general", "furniture", "bike", "electronics"], "rating": 4.5, "jobs": 96, "eta": "Thu, 1–3pm", "priceFactor": 0.1, "verified": false }
+]

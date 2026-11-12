@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FixFrame · Don't replace it. Film it.</title>
+  <meta name="description" content="Film something broken. AI diagnoses it frame by frame, finds the real parts, and you pay with PayPal, or hire a pro and pay only once it's fixed." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="site.css" />
+  <link rel="stylesheet" href="app.css" />
+  <style>
+    /* ---------- hero ---------- */
+    .hero { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; overflow: hidden; }
+    .hero-copy { position: relative; z-index: 3; padding-top: clamp(40px, 9vh, 96px); width: min(760px, calc(100% - 40px)); }
+    .hero h1 { font-size: clamp(52px, 7.4vw, 104px); line-height: .98; letter-spacing: -.02em; margin: 18px 0 22px; }
+    .hero h1 em { display: inline-block; }
+    .hero .sub { color: var(--ink-2); font-size: 16px; max-width: 470px; margin: 0 auto 30px; }
+    .pill-input { display: flex; align-items: center; gap: 8px; width: min(440px, 100%); margin: 0 auto; padding: 6px 6px 6px 22px; border-radius: 999px; background: rgba(250, 248, 242, .78); border: 1px solid var(--line); box-shadow: 0 10px 30px -18px rgba(30,42,35,.5); text-decoration: none; transition: transform .25s var(--ease), box-shadow .25s; }
+    .pill-input:hover { transform: translateY(-1px); box-shadow: 0 14px 34px -16px rgba(30,42,35,.55); }
+    .pill-input span { flex: 1; text-align: left; color: var(--ink-3); font-size: 14px; }
+    .pill-input b { background: var(--forest); color: #f3f4ec; padding: 10px 18px; border-radius: 999px; font-size: 13px; font-weight: 600; }
+    .note-tag { display: inline-block; margin-top: 14px; font-family: var(--serif); font-style: italic; font-size: 17px; padding: 3px 12px; border-radius: 6px; background: rgba(200, 150, 74, .2); color: var(--ink-2); transform: rotate(-2deg); }
+
+    .art { position: relative; width: 100%; height: clamp(320px, 46vh, 470px); margin-top: 6px; z-index: 1; pointer-events: none; }
+    .art svg { position: absolute; left: 50%; bottom: 0; width: max(1440px, 100%); height: 100%; transform: translateX(-50%); }
+    .art .layer { will-change: transform; }
+    .seam { fill: none; stroke: url(#gold); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 600; stroke-dashoffset: 600; filter: url(#glow); }
+    .mended .seam { animation: mend 2.4s cubic-bezier(.6, 0, .2, 1) forwards; }
+    .mended .seam.s2 { animation-delay: .5s; } .mended .seam.s3 { animation-delay: .9s; } .mended .seam.s4 { animation-delay: 1.2s; }
+    @keyframes mend { to { stroke-dashoffset: 0; } }
+    .crack { fill: none; stroke: #3b4a40; stroke-width: 1.4; opacity: .55; transition: opacity 1.6s ease 1.4s; }
+    .mended .crack { opacity: 0; }
+    .ripple { fill: none; stroke: rgba(230, 236, 222, .45); stroke-width: 1.2; transform-origin: center; transform-box: fill-box; animation: rip 5s ease-out infinite; }
+    .ripple.r2 { animation-delay: 1.7s; } .ripple.r3 { animation-delay: 3.4s; }
+    @keyframes rip { from { transform: scale(.4); opacity: .9; } to { transform: scale(1.6); opacity: 0; } }
+    .annot { position: absolute; z-index: 2; font-family: var(--serif); font-style: italic; font-size: 17px; color: #e9ecdf; display: flex; align-items: center; gap: 10px; opacity: 0; transition: opacity 1s ease; }
+    .mended ~ .annot, .hero.done .annot { opacity: .92; }
+    .annot i { display: block; height: 1px; width: 70px; background: currentColor; opacity: .6; }
+    .a1 { left: calc(50% + 230px); bottom: 210px; transition-delay: 2.4s; }
+    .a2 { right: calc(50% + 250px); bottom: 120px; flex-direction: row-reverse; transition-delay: 2.8s; }
+    .scroll-cue { position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%); z-index: 3; font-size: 10px; letter-spacing: .24em; text-transform: uppercase; color: #dfe5d6; opacity: .75; }
+
+    /* ---------- figure section ---------- */
+    .fig { display: grid; grid-template-columns: .9fr 1.1fr; gap: 64px; align-items: center; }
+    .fig figure { margin: 0; }
+    .fig figcaption { margin-top: 12px; font-family: var(--serif); font-style: italic; font-size: 17px; color: var(--ink-2); display: flex; justify-content: space-between; gap: 12px; }
+    .fig figcaption b { font-style: normal; font-family: var(--sans); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+    .fig .fx-player { border-radius: 6px; box-shadow: 0 30px 60px -30px rgba(30,42,35,.6); }
+    .fig-detail { margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--line); min-height: 86px; }
+    .fig-detail .t { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--clay); font-weight: 600; }
+    .fig-detail h3 { font-size: 28px; margin: 4px 0 4px; line-height: 1.1; }
+    .fig-detail p { margin: 0; color: var(--ink-2); font-size: 15px; }
+
+    /* ---------- three columns ---------- */
+    .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-top: 1px solid var(--ink); }
+    .col { padding: 26px 28px 10px 0; }
+    .col + .col { padding-left: 28px; border-left: 1px solid var(--line); }
+    .col .num { font-family: var(--serif); font-style: italic; font-size: 54px; line-height: 1; color: var(--clay); }
+    .col h3 { font-size: 28px; margin: 14px 0 8px; line-height: 1.1; }
+    .col p { color: var(--ink-2); margin: 0; font-size: 15px; }
+
+    /* ---------- verdict ---------- */
+    .ledger { display: grid; grid-template-columns: 1fr 1fr 1.2fr; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); }
+    .ledger > div { padding: 30px 28px; }
+    .ledger > div + div { border-left: 1px solid var(--line); }
+    .ledger .lbl { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-2); font-weight: 600; }
+    .ledger .big { font-family: var(--serif); font-size: clamp(64px, 8vw, 116px); line-height: 1; margin: 10px 0 6px; font-variant-numeric: lining-nums tabular-nums; }
+    .ledger .struck { color: var(--ink-3); position: relative; display: inline-block; }
+    .ledger .struck::after { content: ""; position: absolute; left: -4%; right: -4%; top: 52%; height: 3px; background: var(--clay); transform: scaleX(0); transform-origin: left; transition: transform .9s var(--ease) .6s; }
+    .ledger.in .struck::after { transform: scaleX(1); }
+    .ledger .save { color: var(--clay); font-style: italic; }
+    .ledger small { color: var(--ink-2); font-size: 14px; }
+
+    /* ---------- pay timeline ---------- */
+    .tl { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; padding-top: 34px; }
+    .tl::before { content: ""; position: absolute; left: 0; right: 0; top: 7px; height: 1px; background: var(--line-2); }
+    .tl .fillbar { position: absolute; left: 0; top: 7px; height: 1px; background: var(--clay); width: 0; transition: width 2.2s var(--ease); }
+    .tl.in .fillbar { width: 100%; }
+    .tl .st { position: relative; }
+    .tl .st::before { content: ""; position: absolute; top: -32px; left: 0; width: 13px; height: 13px; border-radius: 50%; background: var(--paper); border: 1.5px solid var(--ink-3); transition: all .5s; }
+    .tl.in .st::before { background: var(--clay); border-color: var(--clay); }
+    .tl.in .st:nth-child(3)::before { transition-delay: .5s; } .tl.in .st:nth-child(4)::before { transition-delay: 1s; } .tl.in .st:nth-child(5)::before { transition-delay: 1.5s; }
+    .tl .k { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--clay); font-weight: 600; }
+    .tl h3 { font-size: 26px; margin: 6px 0 6px; line-height: 1.1; }
+    .tl p { margin: 0; color: var(--ink-2); font-size: 15px; }
+
+    /* ---------- closing ---------- */
+    .closing { text-align: center; padding: 120px 0 90px; }
+    .closing h2 { font-size: clamp(44px, 6vw, 84px); line-height: 1; margin: 0 0 30px; }
+    .closing h2 em { color: var(--clay); }
+    .stack { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 36px; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-3); }
+    .stack span + span::before { content: "·"; margin-right: 10px; }
+
+    @media (max-width: 900px) {
+      .fig, .cols, .ledger, .tl { grid-template-columns: 1fr; }
+      .col + .col, .ledger > div + div { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); }
+      .tl::before, .tl .fillbar { display: none; }
+      .tl .st::before { display: none; }
+      .annot { display: none; }
+      .art { height: auto; margin-top: 18px; }
+      .art svg { position: relative; left: 50%; width: 230vw; height: auto; display: block; }
+    }
+  </style>
+</head>
+<body class="landing">
+  <div class="backdrop" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="progress" aria-hidden="true"></div>
+
+  <header class="top">
+    <a class="brand" href="index.html"><span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg></span>fixframe</a>
+    <nav class="nav">
+      <a href="#figure">The demo</a>
+      <a href="#how">How it works</a>
+      <a href="#ledger">Repair vs replace</a>
+      <a href="#pay">Pay if fixed</a>
+      <a class="cta" href="fix.html">Fix something</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ================= HERO ================= -->
+    <section class="hero" id="hero">
+      <div class="hero-copy">
+        <div class="eyebrow reveal">Film it · Fix it · Pay when it works</div>
+        <h1 class="reveal" style="--d:100ms">Don't replace it.<br><em>Film it.</em></h1>
+        <p class="sub reveal" style="--d:200ms">Point your phone at anything broken. FixFrame finds the fault frame by frame, orders the exact part, and walks you through the fix. Or hire a pro and pay only once it works.</p>
+        <a class="pill-input reveal" style="--d:300ms" href="fix.html"><span>Drop a video of what's broken…</span><b>Diagnose</b></a>
+        <div class="reveal" style="--d:380ms"><span class="note-tag">Most fixes cost less than lunch.</span></div>
+      </div>
+
+      <div class="art" aria-hidden="true">
+        <svg viewBox="0 150 1440 410" preserveAspectRatio="xMidYMax slice" id="artSvg">
+          <defs>
+            <filter id="wash" x="-10%" y="-10%" width="120%" height="120%">
+              <feTurbulence type="fractalNoise" baseFrequency=".012" numOctaves="3" seed="4" result="n" />
+              <feDisplacementMap in="SourceGraphic" in2="n" scale="16" xChannelSelector="R" yChannelSelector="G" result="d" />
+              <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="9" result="g" />
+              <feColorMatrix in="g" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .28 0" result="ga" />
+              <feComposite in="ga" in2="d" operator="in" result="gin" />
+              <feMerge><feMergeNode in="d" /><feMergeNode in="gin" /></feMerge>
+            </filter>
+            <filter id="ink"><feTurbulence type="fractalNoise" baseFrequency=".04" numOctaves="2" seed="2" /><feDisplacementMap in="SourceGraphic" scale="3" /></filter>
+            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.2" result="b" /><feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
+            <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6f8c78" /><stop offset=".45" stop-color="#4f6c5a" /><stop offset="1" stop-color="#2c4235" /></linearGradient>
+            <radialGradient id="glaze" cx=".38" cy=".28" r=".85"><stop offset="0" stop-color="#f1eadb" /><stop offset=".45" stop-color="#d9cdb6" /><stop offset=".8" stop-color="#b9a988" /><stop offset="1" stop-color="#8f8064" /></radialGradient>
+            <linearGradient id="inner" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7d8f79" /><stop offset="1" stop-color="#a7b39b" /></linearGradient>
+            <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3d58b" /><stop offset=".5" stop-color="#c8964a" /><stop offset="1" stop-color="#f0c96e" /></linearGradient>
+          </defs>
+
+          <!-- far wash + horizon -->
+          <g class="layer" data-speed="0.05">
+            <rect x="0" y="0" width="1440" height="560" fill="none" />
+            <path d="M0 270 C 240 262, 480 276, 720 268 S 1200 262, 1440 272 L1440 560 L0 560 Z" fill="url(#sea)" filter="url(#wash)" />
+            <path d="M0 271 C 300 266, 600 278, 900 269 S 1300 266, 1440 272" stroke="#2c4235" stroke-width="1.2" fill="none" opacity=".5" filter="url(#ink)" />
+            <g opacity=".22" stroke="#e5ebdf" stroke-width="1" fill="none">
+              <path d="M90 330 h140 M300 352 h90 M1080 318 h170 M1180 362 h110 M140 410 h70 M1250 420 h90 M60 470 h160 M1100 480 h120" />
+            </g>
+          </g>
+
+          <!-- bowl -->
+          <g class="layer" data-speed="0.12">
+            <ellipse cx="720" cy="452" rx="250" ry="26" fill="#1f3128" opacity=".45" filter="url(#wash)" />
+            <ellipse class="ripple" cx="720" cy="452" rx="280" ry="22" />
+            <ellipse class="ripple r2" cx="720" cy="452" rx="280" ry="22" />
+            <ellipse class="ripple r3" cx="720" cy="452" rx="280" ry="22" />
+            <g filter="url(#wash)">
+              <path d="M470 236 C 476 352, 560 440, 720 446 C 880 440, 964 352, 970 236 Z" fill="url(#glaze)" />
+              <ellipse cx="720" cy="236" rx="250" ry="40" fill="url(#inner)" />
+              <ellipse cx="720" cy="236" rx="250" ry="40" fill="none" stroke="#efe6d2" stroke-width="7" />
+              <path d="M520 300 C 560 370, 620 410, 690 422" stroke="#fff" stroke-opacity=".35" stroke-width="10" fill="none" stroke-linecap="round" />
+              <path d="M640 446 C 650 462, 790 462, 800 446" fill="#a4957a" />
+            </g>
+            <!-- cracks (fade out) and gold seams (draw in) -->
+            <g filter="url(#ink)">
+              <path class="crack" d="M596 206 L 612 252 L 598 300 L 626 352 L 612 404" />
+              <path class="crack" d="M612 252 L 668 274 L 716 268 L 760 300 L 812 296" />
+              <path class="crack" d="M846 220 L 838 262 L 870 318 L 852 372" />
+              <path class="crack" d="M760 300 L 744 360 L 772 420" />
+            </g>
+            <g id="seams">
+              <path class="seam s1" d="M596 206 L 612 252 L 598 300 L 626 352 L 612 404" />
+              <path class="seam s2" d="M612 252 L 668 274 L 716 268 L 760 300 L 812 296" />
+              <path class="seam s3" d="M846 220 L 838 262 L 870 318 L 852 372" />
+              <path class="seam s4" d="M760 300 L 744 360 L 772 420" />
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="annot a1"><i></i>mended, not replaced</div>
+      <div class="annot a2"><i></i>a $12 part</div>
+      <a class="scroll-cue" href="#figure">Scroll</a>
+    </section>
+
+    <!-- ================= FIG. 1 ================= -->
+    <section class="section" id="figure">
+      <div class="wrap fig">
+        <div>
+          <div class="kicker reveal">Fig. 1 · The diagnosis</div>
+          <h2 class="reveal">It sees what's<br><em>actually</em> broken.</h2>
+          <p class="lead reveal" style="margin-bottom:0">Claude watches your clip frame by frame and marks the evidence right on the video: where it drips, which seal is cracked, where the shutoff valve is.</p>
+          <div class="fig-detail reveal" id="figDetail"><div class="t" id="figT">0:00</div><h3 id="figLabel">Watching your clip…</h3><p id="figText">Markers appear as the video plays.</p></div>
+        </div>
+        <figure class="reveal" style="--d:120ms">
+          <div class="fx-player">
+            <video src="media/demo-faucet.mp4" autoplay muted loop playsinline poster="media/demo-poster.jpg" id="heroVideo"></video>
+            <div class="ov" id="heroOv"></div>
+          </div>
+          <figcaption><span>A dripping faucet, diagnosed in twelve seconds.</span><b>Demo clip</b></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ================= HOW ================= -->
+    <section class="section" id="how" style="padding-top:20px">
+      <div class="wrap">
+        <div class="kicker reveal">How it works</div>
+        <h2 class="reveal" style="margin-bottom:44px">Film. Fix. <em>Keep the money.</em></h2>
+        <div class="cols">
+          <div class="col reveal"><div class="num">i.</div><h3>Film the problem</h3><p>Ten to thirty seconds on your phone. FixFrame marks exactly what's wrong, with timestamps you can click.</p></div>
+          <div class="col reveal" style="--d:120ms"><div class="num">ii.</div><h3>Get the exact part</h3><p>Every fault becomes a real part from real stores via Channel3. You can even search by the photo of the worn piece.</p></div>
+          <div class="col reveal" style="--d:240ms"><div class="num">iii.</div><h3>Fix it, or hire it</h3><p>Follow steps pinned to your own video, or book a pro. PayPal holds the money until the fix is verified.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= LEDGER ================= -->
+    <section class="section" id="ledger" style="padding-top:20px">
+      <div class="wrap">
+        <div class="kicker reveal">Repair vs replace</div>
+        <h2 class="reveal" style="margin-bottom:44px">The honest arithmetic.</h2>
+        <div class="ledger" id="ledgerBox">
+          <div><div class="lbl">Repair it</div><div class="big">$<span data-num="12">0</span></div><small>Washer kit, O-rings, grease · 25 min</small></div>
+          <div><div class="lbl">Replace it</div><div class="big"><span class="struck">$<span data-num="189">0</span></span></div><small>New faucet plus install</small></div>
+          <div><div class="lbl">You keep</div><div class="big save">$<span data-num="177">0</span></div><small>plus ~3,000 gallons of water a year (EPA estimate for a once-a-second drip)</small></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PAY IF FIXED ================= -->
+    <section class="section" id="pay" style="padding-top:20px">
+      <div class="wrap">
+        <div class="kicker reveal">PayPal · authorize, then capture</div>
+        <h2 class="reveal">Hire a pro.<br><em>Pay only if it's fixed.</em></h2>
+        <p class="lead reveal">PayPal holds the money when you book. After the repair you film it again. If the fault is gone, the payment goes through. If not, you're never charged.</p>
+        <div class="tl" id="payTl">
+          <span class="fillbar"></span>
+          <div class="st"><div class="k">Book</div><h3>Pick a pro</h3><p>Quotes based on the diagnosis, not a guess over the phone.</p></div>
+          <div class="st"><div class="k">Hold</div><h3>PayPal authorizes</h3><p>Money is reserved, not charged.</p></div>
+          <div class="st"><div class="k">Verify</div><h3>Film it again</h3><p>Claude compares the after-clip to the original fault.</p></div>
+          <div class="st"><div class="k">Pay</div><h3>Captured, or released</h3><p>Fixed, the pro is paid. Not fixed, you're not charged.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing">
+      <div class="wrap">
+        <div class="kicker reveal">Begin</div>
+        <h2 class="reveal">What's broken<br><em>at your place?</em></h2>
+        <a class="pill-input reveal" href="fix.html"><span>Drop a video of what's broken…</span><b>Diagnose</b></a>
+        <div class="cta-actions reveal"><a class="btn light" href="fix.html?demo=1">Or watch the demo <span class="plus">▶</span></a></div>
+        <div class="stack reveal"><span>Claude vision</span><span>Channel3</span><span>PayPal</span><span>AG Grid</span><span>Render</span></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>Sandbox demo · Payments run in PayPal's sandbox · The demo clip is an illustration; upload your own to try live diagnosis.</footer>
+  <script src="ui.js"></script>
+  <script src="site.js"></script>
+  <script>
+    (function () {
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const svg = document.getElementById('artSvg');
+      const hero = document.getElementById('hero');
+      // Mend the bowl shortly after load.
+      setTimeout(() => { svg.classList.add('mended'); hero.classList.add('done'); }, reduce ? 0 : 900);
+
+      // Scroll parallax for the painted layers.
+      const layers = [...svg.querySelectorAll('.layer')];
+      const onScroll = () => {
+        const y = Math.min(scrollY, innerHeight);
+        layers.forEach((l) => (l.style.transform = reduce ? '' : `translateY(${y * Number(l.dataset.speed)}px)`));
+      };
+      addEventListener('scroll', onScroll, { passive: true });
+
+      // Serif count-ups and section triggers.
+      const io = new IntersectionObserver((es) => es.forEach((e) => {
+        if (!e.isIntersecting) return;
+        io.unobserve(e.target);
+        e.target.classList.add('in');
+        e.target.querySelectorAll('[data-num]').forEach((el) => {
+          const to = Number(el.dataset.num), t0 = performance.now();
+          const tick = (now) => { const k = Math.min(1, (now - t0) / 1300); el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(tick); };
+          requestAnimationFrame(tick);
+        });
+      }), { threshold: 0.35 });
+      ['ledgerBox', 'payTl'].forEach((id) => io.observe(document.getElementById(id)));
+
+      // Fig. 1: replay the pre-checked markers on the demo clip.
+      fetch('data/demo-markers.json').then((r) => r.json()).then((markers) => {
+        const v = document.getElementById('heroVideo');
+        const ov = document.getElementById('heroOv');
+        ov.innerHTML = markers.map((m, i) => `<div class="box ${m.box.x + m.box.w / 2 > 0.6 ? 'right' : ''}" style="left:${m.box.x * 100}%;top:${m.box.y * 100}%;width:${m.box.w * 100}%;height:${m.box.h * 100}%"><span class="tag">${m.label}</span></div>`).join('');
+        const boxes = [...ov.children];
+        let last = -2;
+        const tick = () => {
+          const t = v.currentTime;
+          let near = -1;
+          markers.forEach((m, i) => { if (Math.abs(t - m.t) < 1 && (near < 0 || Math.abs(t - m.t) < Math.abs(t - markers[near].t))) near = i; });
+          boxes.forEach((b, i) => b.classList.toggle('show', i === near));
+          if (near >= 0 && near !== last) {
+            last = near;
+            document.getElementById('figT').textContent = `0:${String(Math.floor(markers[near].t)).padStart(2, '0')}`;
+            document.getElementById('figLabel').textContent = markers[near].label;
+            document.getElementById('figText').textContent = markers[near].detail;
+          }
+          requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      }).catch(() => {});
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+[
+ {
+  "t": 1.8,
+  "label": "Spout drips while closed",
+  "detail": "Steady drip with the handle off: the seat washer no longer seals.",
+  "box": {
+   "x": 0.555,
+   "y": 0.35,
+   "w": 0.075,
+   "h": 0.2
+  }
+ },
+ {
+  "t": 5.6,
+  "label": "Cracked O-ring at handle base",
+  "detail": "The seal ring under the handle is cracked, so water escapes around the stem.",
+  "box": {
+   "x": 0.385,
+   "y": 0.385,
+   "w": 0.24,
+   "h": 0.085
+  }
+ },
+ {
+  "t": 6.4,
+  "label": "Water tracking down the body",
+  "detail": "Seepage runs down both sides of the valve body and leaves mineral scale.",
+  "box": {
+   "x": 0.395,
+   "y": 0.44,
+   "w": 0.215,
+   "h": 0.33
+  }
+ },
+ {
+  "t": 9.8,
+  "label": "Shutoff valves found",
+  "detail": "Both supply valves are reachable, so you can do this without shutting off the whole house.",
+  "box": {
+   "x": 0.3,
+   "y": 0.53,
+   "w": 0.4,
+   "h": 0.19
+  }
+ }
+]

@@ -1,0 +1,20 @@
+{
+  "_note": "Sample offers used ONLY when CHANNEL3_API_KEY is not set, so the app still runs for judges. With a key, every part is searched live on Channel3.",
+  "generic": [
+    { "title": "Universal repair kit", "merchant": "sample-hardware.example", "price": 9.99, "availability": "InStock", "image": null }
+  ],
+  "seat-washers": [
+    { "title": "Flat faucet washers with brass screws (40 pc)", "merchant": "sample-hardware.example", "price": 4.97, "availability": "InStock", "image": null },
+    { "title": "Faucet washer assortment (120 pc)", "merchant": "sample-homecenter.example", "price": 6.48, "availability": "InStock", "image": null },
+    { "title": "Neoprene bibb washer and screw kit", "merchant": "sample-marketplace.example", "price": 3.79, "availability": "LimitedAvailability", "image": null }
+  ],
+  "o-rings": [
+    { "title": "Faucet O-ring assortment (30 pc)", "merchant": "sample-hardware.example", "price": 5.47, "availability": "InStock", "image": null },
+    { "title": "Rubber O-Ring Kit, 225 pieces, plumbing grade", "merchant": "sample-marketplace.example", "price": 7.99, "availability": "InStock", "image": null },
+    { "title": "Faucet Stem O-Ring Pack, assorted", "merchant": "sample-homecenter.example", "price": 4.28, "availability": "InStock", "image": null }
+  ],
+  "grease": [
+    { "title": "Silicone faucet grease, 0.5 oz", "merchant": "sample-hardware.example", "price": 3.98, "availability": "InStock", "image": null },
+    { "title": "Plumber's grease, 1 oz", "merchant": "sample-homecenter.example", "price": 4.47, "availability": "InStock", "image": null }
+  ]
+}
